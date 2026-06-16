@@ -3,7 +3,7 @@ import type { ReviewConfig } from '@learncourse/framework/types';
 import { useTheme, useLocalStorage, useTextSelectionQuote } from '@learncourse/framework';
 import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
 import { ModuleSection, ExamOverview, Checklist, Toolbar } from '@learncourse/framework';
-import { templateConfig } from '../../courses/template/config';
+import { templateConfig } from '@courses/template/config';
 
 export default function App() {
   const config: ReviewConfig = templateConfig;
