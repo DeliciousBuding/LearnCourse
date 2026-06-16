@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Send, Loader2, Settings, Trash2, Quote } from 'lucide-react';
+import { X, Send, Loader2, Settings, Trash2 } from 'lucide-react';
 
 interface Message { role: 'user' | 'assistant'; content: string; }
 interface ChatSettings { apiKey: string; baseUrl: string; model: string; }
