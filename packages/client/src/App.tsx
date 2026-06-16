@@ -3,12 +3,12 @@ import type { ReviewConfig } from '@learncourse/framework/types';
 import { useTheme, useLocalStorage, useTextSelectionQuote } from '@learncourse/framework';
 import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
 import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage } from '@learncourse/framework';
-import { COURSES, DEFAULT_COURSE, getCourseSlug } from '@courses/index';
+import { COURSES, DEFAULT_COURSE } from './courses/index';
 
 export default function App() {
-  const [courseSlug, setCourseSlug] = useState<string | null>(() => {
-    return new URLSearchParams(location.search).has('course') ? getCourseSlug() : null;
-  });
+  const [courseSlug, setCourseSlug] = useState<string | null>(() =>
+    new URLSearchParams(location.search).get('course')
+  );
   const [config, setConfig] = useState<ReviewConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const { effective, toggle: toggleTheme } = useTheme();
@@ -28,16 +28,21 @@ export default function App() {
     setCourseSlug(slug);
   };
 
-  // Load course config
   useEffect(() => {
-    if (!courseSlug) return;
-    setLoading(true);
-    setConfig(null);
+    if (!courseSlug) { setConfig(null); setLoading(false); return; }
     const entry = COURSES.find(c => c.slug === courseSlug) || COURSES.find(c => c.slug === DEFAULT_COURSE)!;
-    entry.loader().then(m => { setConfig(m.default); setLoading(false); });
+    setConfig(entry.config);
+    setLoading(false);
   }, [courseSlug]);
 
-  // Landing page
+  // All hooks must be before any conditional return
+  const modulesStudied = Object.values(studied).filter(Boolean).length;
+  const toggleStudied = useCallback((moduleId: string) => (v: boolean) => {
+    setStudied(prev => ({ ...prev, [moduleId]: v }));
+  }, [setStudied]);
+  const hasRightPanel = !!(slidePanel || chatOpen);
+  const rightOffset = chatOpen ? 420 : panelWidth;
+
   if (!courseSlug) {
     return <LandingPage courses={COURSES} onSelectCourse={selectCourse} />;
   }
@@ -45,14 +50,6 @@ export default function App() {
   if (loading || !config) {
     return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)' }}>加载课程...</div>;
   }
-
-  const modulesStudied = Object.values(studied).filter(Boolean).length;
-  const toggleStudied = useCallback((moduleId: string) => (v: boolean) => {
-    setStudied(prev => ({ ...prev, [moduleId]: v }));
-  }, [setStudied]);
-
-  const hasRightPanel = !!(slidePanel || chatOpen);
-  const rightOffset = chatOpen ? 420 : panelWidth;
 
   return (
     <>

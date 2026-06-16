@@ -11,8 +11,8 @@ export default defineConfig({
     },
   },
   server: {
-    fs: {
-      allow: ['..', '../..'],
-    },
+    port: 5199,
+    strictPort: true,
+    fs: { allow: ['..', '../..'] },
   },
 })

@@ -1,8 +1,9 @@
 import { BookOpen, ArrowRight } from 'lucide-react';
-import type { CourseEntry } from '@courses/index';
+
+interface CourseEntryLike { slug: string; title: string; }
 
 interface LandingPageProps {
-  courses: CourseEntry[];
+  courses: CourseEntryLike[];
   onSelectCourse: (slug: string) => void;
 }
 
