@@ -1,0 +1,15 @@
+{
+  "name": "learncourse",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Open-source learning framework — build interactive course review sites with AI chat sidebar",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "npm run dev -w packages/client",
+    "build": "npm run build -w packages/client",
+    "preview": "npm run preview -w packages/client"
+  },
+  "keywords": ["education", "learning", "review", "ai-chat", "react", "typescript"],
+  "license": "MIT",
+  "author": ""
+}
