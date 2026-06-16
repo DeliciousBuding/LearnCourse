@@ -10,4 +10,9 @@ export default defineConfig({
       '@courses': path.resolve(__dirname, '../../courses'),
     },
   },
+  server: {
+    fs: {
+      allow: ['..', '../..'],
+    },
+  },
 })
