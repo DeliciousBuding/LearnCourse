@@ -1,13 +1,23 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useScrollSpy } from '../hooks/useScrollSpy';
+import { ChevronDown, Home, BookOpen } from 'lucide-react';
 
 interface NavLink { href: string; label: string; }
 interface NavGroup { title: string; links: NavLink[]; }
+interface CourseEntryLike { slug: string; title: string; }
 
-export function Sidebar({ groups }: { groups: NavGroup[] }) {
+interface SidebarProps {
+  groups: NavGroup[];
+  courses?: CourseEntryLike[];
+  currentCourse?: string;
+  onSwitchCourse?: (slug: string) => void;
+}
+
+export function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProps) {
   const allIds = groups.flatMap(g => g.links.map(l => l.href.replace('#', '')));
   const activeId = useScrollSpy(allIds);
   const activeRef = useRef<HTMLAnchorElement>(null);
+  const [coursesOpen, setCoursesOpen] = useState(false);
 
   useEffect(() => {
     if (activeRef.current) {
@@ -15,15 +25,64 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
     }
   }, [activeId]);
 
+  const hasMultiCourse = courses && courses.length > 1;
+
+  const linkStyle = (active: boolean): React.CSSProperties => ({
+    display: 'block', padding: '0.35rem 0.5rem', marginBottom: 1,
+    borderRadius: 8, textDecoration: 'none', lineHeight: 1.5,
+    transition: 'all 120ms ease', fontSize: '0.85rem',
+    color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+    background: active ? 'var(--color-accent-soft)' : 'transparent',
+    fontWeight: active ? 600 : 400,
+  });
+
   return (
     <aside id="app-sidebar">
-      <div style={{ padding: '1.5rem 1rem 1rem' }}>
-        <a href="#" style={{ display: 'block', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'Georgia, "Noto Serif SC", serif', color: 'var(--color-text)', textDecoration: 'none', lineHeight: 1.3 }}>
-          人工智能导论<br />期末复习大纲
+      <div style={{ padding: '1.5rem 1rem 0.5rem' }}>
+        <a href="?" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', color: 'var(--color-text-tertiary)', textDecoration: 'none', marginBottom: '0.75rem' }}>
+          <Home size={14} /> 返回首页
         </a>
-        <span style={{ display: 'inline-block', fontSize: '0.7rem', marginTop: '0.4rem', padding: '0.15em 0.6em', borderRadius: '999px', background: 'var(--color-accent-soft)', color: 'var(--color-accent)', fontWeight: 600 }}>
-          2026 春 · 闭卷 120min
-        </span>
+        <a href="#" style={{ display: 'block', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'Georgia, "Noto Serif SC", serif', color: 'var(--color-text)', textDecoration: 'none', lineHeight: 1.3 }}>
+          LearnCourse
+        </a>
+
+        {/* Course switcher */}
+        {hasMultiCourse && (
+          <div style={{ marginTop: '0.6rem' }}>
+            <button
+              onClick={() => setCoursesOpen(!coursesOpen)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4, width: '100%',
+                padding: '0.3rem 0.5rem', borderRadius: 6, border: '1px solid var(--color-border)',
+                background: 'var(--color-surface)', color: 'var(--color-text-secondary)',
+                fontSize: '0.78rem', cursor: 'pointer',
+              }}
+            >
+              <BookOpen size={13} />
+              <span style={{ flex: 1, textAlign: 'left' }}>{courses?.find(c => c.slug === currentCourse)?.title || '选择课程'}</span>
+              <ChevronDown size={12} style={{ transform: coursesOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
+            </button>
+            {coursesOpen && (
+              <div style={{ marginTop: 4, paddingLeft: '0.5rem' }}>
+                {courses!.map(c => (
+                  <button
+                    key={c.slug}
+                    onClick={() => { onSwitchCourse?.(c.slug); setCoursesOpen(false); }}
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'left',
+                      padding: '0.25rem 0.5rem', borderRadius: 6, border: 'none',
+                      background: c.slug === currentCourse ? 'var(--color-accent-soft)' : 'transparent',
+                      color: c.slug === currentCourse ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                      fontSize: '0.78rem', cursor: 'pointer', fontWeight: c.slug === currentCourse ? 600 : 400,
+                    }}
+                  >
+                    {c.title}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <nav style={{ padding: '0 1rem 2rem', fontSize: '0.85rem' }}>
@@ -48,14 +107,7 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
                     e.preventDefault();
                     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  style={{
-                    display: 'block', padding: '0.35rem 0.5rem', marginBottom: 1,
-                    borderRadius: 8, textDecoration: 'none', lineHeight: 1.5,
-                    transition: 'all 120ms ease',
-                    color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                    background: active ? 'var(--color-accent-soft)' : 'transparent',
-                    fontWeight: active ? 600 : 400,
-                  }}
+                  style={linkStyle(active)}
                   onMouseEnter={e => { if (!active) { e.currentTarget.style.color = 'var(--color-text)'; e.currentTarget.style.background = 'var(--color-code-bg)'; } }}
                   onMouseLeave={e => { if (!active) { e.currentTarget.style.color = 'var(--color-text-secondary)'; e.currentTarget.style.background = 'transparent'; } }}
                 >

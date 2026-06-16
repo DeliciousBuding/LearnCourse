@@ -2,15 +2,17 @@ import { useState, useCallback, useEffect } from 'react';
 import type { ReviewConfig } from '@learncourse/framework/types';
 import { useTheme, useLocalStorage, useTextSelectionQuote } from '@learncourse/framework';
 import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
-import { ModuleSection, ExamOverview, Checklist, Toolbar } from '@learncourse/framework';
+import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage } from '@learncourse/framework';
 import { COURSES, DEFAULT_COURSE, getCourseSlug } from '@courses/index';
 
 export default function App() {
-  const [courseSlug, setCourseSlug] = useState(getCourseSlug);
+  const [courseSlug, setCourseSlug] = useState<string | null>(() => {
+    return new URLSearchParams(location.search).has('course') ? getCourseSlug() : null;
+  });
   const [config, setConfig] = useState<ReviewConfig | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { effective, toggle: toggleTheme } = useTheme();
-  const [studied, setStudied] = useLocalStorage<Record<string, boolean>>(`lc-${courseSlug}-studied`, {});
+  const [studied, setStudied] = useLocalStorage<Record<string, boolean>>(`lc-${courseSlug || 'landing'}-studied`, {});
   const [checklistDone, setChecklistDone] = useState(0);
   const [expandAll, setExpandAll] = useState(false);
   const [slidePanel, setSlidePanel] = useState<{ moduleId: string; courseware: string; page?: number } | null>(null);
@@ -19,48 +21,35 @@ export default function App() {
 
   useTextSelectionQuote();
 
-  // Load course config
-  useEffect(() => {
-    setLoading(true);
-    setConfig(null);
-    const entry = COURSES.find(c => c.slug === courseSlug) || COURSES.find(c => c.slug === DEFAULT_COURSE)!;
-    entry.loader().then(m => { setConfig(m.default); setLoading(false); });
-  }, [courseSlug]);
-
-  // Update URL when course changes
-  const switchCourse = (slug: string) => {
+  const selectCourse = (slug: string) => {
     const url = new URL(location.href);
     url.searchParams.set('course', slug);
     history.pushState({}, '', url);
     setCourseSlug(slug);
   };
 
-  const modulesStudied = Object.values(studied).filter(Boolean).length;
+  // Load course config
+  useEffect(() => {
+    if (!courseSlug) return;
+    setLoading(true);
+    setConfig(null);
+    const entry = COURSES.find(c => c.slug === courseSlug) || COURSES.find(c => c.slug === DEFAULT_COURSE)!;
+    entry.loader().then(m => { setConfig(m.default); setLoading(false); });
+  }, [courseSlug]);
 
+  // Landing page
+  if (!courseSlug) {
+    return <LandingPage courses={COURSES} onSelectCourse={selectCourse} />;
+  }
+
+  if (loading || !config) {
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)' }}>加载课程...</div>;
+  }
+
+  const modulesStudied = Object.values(studied).filter(Boolean).length;
   const toggleStudied = useCallback((moduleId: string) => (v: boolean) => {
     setStudied(prev => ({ ...prev, [moduleId]: v }));
   }, [setStudied]);
-
-  useEffect(() => {
-    const h = (e: Event) => {
-      if (!config) return;
-      const { page } = (e as CustomEvent).detail as { page: number };
-      const mid = config.modules.find(m => {
-        const el = document.getElementById(m.id);
-        if (!el) return false;
-        const r = el.getBoundingClientRect();
-        return r.top < window.innerHeight / 2 && r.bottom > 0;
-      });
-      const meta = mid ?? config.modules[0];
-      setSlidePanel({ moduleId: meta.id, courseware: meta.courseware, page });
-    };
-    window.addEventListener('open-slide', h);
-    return () => window.removeEventListener('open-slide', h);
-  }, [config]);
-
-  if (loading || !config) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)', fontSize: '1.2rem' }}>加载课程...</div>;
-  }
 
   const hasRightPanel = !!(slidePanel || chatOpen);
   const rightOffset = chatOpen ? 420 : panelWidth;
@@ -73,9 +62,9 @@ export default function App() {
         totalModules={config.modules.length} totalChecklist={config.checklist.length}
         onChatToggle={() => setChatOpen(!chatOpen)}
         title={config.title} subtitle={config.subtitle}
-        courses={COURSES} currentCourse={courseSlug} onSwitchCourse={switchCourse}
+        courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse}
       />
-      <Sidebar groups={config.navGroups} />
+      <Sidebar groups={config.navGroups} courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
       <div id="app-layout">
         <main id="app-main" style={hasRightPanel ? { marginRight: rightOffset } : undefined}>
           <div id="app-main-inner">

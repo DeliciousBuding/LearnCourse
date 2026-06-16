@@ -27,6 +27,7 @@ export { ExamOverview } from './ui/ExamOverview';
 export { ExamQuestion } from './ui/ExamQuestion';
 export { KnowledgeMainline } from './ui/KnowledgeMainline';
 export { KnowledgeMap } from './ui/KnowledgeMap';
+export { LandingPage } from './ui/LandingPage';
 export { MathFormula } from './ui/MathFormula';
 export { MermaidDiagram } from './ui/MermaidDiagram';
 export { ModuleSection } from './ui/ModuleSection';
