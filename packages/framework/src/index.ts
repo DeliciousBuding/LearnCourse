@@ -19,6 +19,7 @@ export { SlidePanel } from './layout/SlidePanel';
 export { Callout } from './ui/Callout';
 export { Card } from './ui/Card';
 export { ChatPanel } from './ui/ChatPanel';
+export { CodeBlock } from './ui/CodeBlock';
 export { CourseSwitcher } from './ui/CourseSwitcher';
 export { Checklist } from './ui/Checklist';
 export { ComparisonTable } from './ui/ComparisonTable';

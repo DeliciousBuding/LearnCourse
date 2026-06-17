@@ -7,6 +7,7 @@ import { ComparisonTable } from './ComparisonTable';
 import { QuizBlock } from './QuizBlock';
 import { ExamQuestion as ExamQuestionCard } from './ExamQuestion';
 import { ProseBlock } from './ProseBlock';
+import { CodeBlock } from './CodeBlock';
 import { SlideRef } from './SlideRef';
 import { StudiedToggle } from './StudiedToggle';
 
@@ -114,7 +115,7 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
                   case 'table':
                     return <ComparisonTable key={bi} headers={block.headers} rows={block.rows} />;
                   case 'code':
-                    return <pre key={bi}><code>{block.code}</code></pre>;
+                    return <CodeBlock key={bi} language={block.language} code={block.code} />;
                   case 'details':
                     return <DetailBlock key={bi} summary={block.summary} open={expandAll}><ProseBlock html={block.body} /></DetailBlock>;
                   case 'mermaid':
