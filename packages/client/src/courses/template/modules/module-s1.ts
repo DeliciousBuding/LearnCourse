@@ -1,4 +1,4 @@
-import type { ModuleContent } from '@learncourse/framework/types';
+import type { ModuleContent } from 'learncourse/types';
 
 const content: ModuleContent = {
   meta: { id: 's1', number: 1, title: '模块一', icon: 'BookOpen', courseware: '', examRefs: '' },

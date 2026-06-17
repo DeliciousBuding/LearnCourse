@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { ReviewConfig } from '@learncourse/framework/types';
-import { useTheme, useLocalStorage, useTextSelectionQuote } from '@learncourse/framework';
-import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
-import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from '@learncourse/framework';
+import type { ReviewConfig } from 'learncourse/types';
+import { useTheme, useLocalStorage, useTextSelectionQuote } from 'learncourse';
+import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from 'learncourse';
+import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from 'learncourse';
 import { COURSES, DEFAULT_COURSE } from './courses/index';
 
 export default function App() {

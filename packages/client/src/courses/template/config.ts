@@ -1,4 +1,4 @@
-import type { ReviewConfig } from '@learncourse/framework/types';
+import type { ReviewConfig } from 'learncourse/types';
 
 export const templateConfig: ReviewConfig = {
   title: '课程名称',
