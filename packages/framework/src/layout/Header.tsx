@@ -1,4 +1,5 @@
-import { Moon, Sun, MessageCircle, BookOpen } from 'lucide-react';
+import { Moon, Sun, MessageCircle } from 'lucide-react';
+import { CourseSwitcher } from '../ui/CourseSwitcher';
 
 interface CourseEntryLike { slug: string; title: string; }
 
@@ -29,17 +30,7 @@ export function Header({ effective, onThemeToggle, modulesStudied, checklistDone
           {subtitle && <span style={{ fontSize: '0.7rem', padding: '0.15em 0.6em', borderRadius: '999px', background: 'var(--color-accent-soft)', color: 'var(--color-accent)', fontWeight: 600, whiteSpace: 'nowrap' }}>{subtitle}</span>}
 
           {hasMultiple && (
-            <select
-              value={currentCourse}
-              onChange={e => onSwitchCourse?.(e.target.value)}
-              style={{
-                fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: 6,
-                border: '1px solid var(--color-border)', background: 'var(--color-surface)',
-                color: 'var(--color-text-secondary)', cursor: 'pointer', outline: 'none',
-              }}
-            >
-              {courses!.map(c => <option key={c.slug} value={c.slug}>{c.title}</option>)}
-            </select>
+            <CourseSwitcher courses={courses!} current={currentCourse!} onSwitch={onSwitchCourse!} />
           )}
         </div>
 
