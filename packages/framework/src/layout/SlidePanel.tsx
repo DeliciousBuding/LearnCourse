@@ -13,6 +13,7 @@ interface SlidePanelProps {
 export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: SlidePanelProps) {
   const [width, setWidth] = useLocalStorage('slide-panel-width', 480);
   const [loading, setLoading] = useState(true);
+  const [closing, setClosing] = useState(false);
   const dragging = useRef(false);
   const startX = useRef(0);
   const startW = useRef(0);
@@ -38,12 +39,17 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [setWidth]);
 
+  const doClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(onClose, 250);
+  }, [onClose]);
+
   // Escape to close
   useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') doClose(); };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, [onClose]);
+  }, [doClose]);
 
   // Reset loading
   useEffect(() => { setLoading(true); }, [moduleId]);
@@ -55,7 +61,9 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
       background: 'var(--color-surface)',
       borderLeft: '1px solid var(--color-border)',
       boxShadow: '-4px 0 24px rgba(0,0,0,0.05)',
-      animation: 'slideInRight 200ms cubic-bezier(0.4,0,0.2,1)',
+      transform: closing ? `translateX(${width}px)` : 'none',
+      transition: 'transform 250ms cubic-bezier(0.4,0,0.2,1)',
+      animation: closing ? 'none' : 'slideInRight 200ms cubic-bezier(0.4,0,0.2,1)',
     }}>
       {/* Drag handle */}
       <div onMouseDown={onMouseDown} style={{
@@ -74,7 +82,7 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
         <span style={{ fontWeight: 600, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           📄 {courseware}
         </span>
-        <button onClick={onClose} style={{
+        <button onClick={doClose} style={{
           width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
           borderRadius: 6, border: 'none', background: 'var(--color-code-bg)',
           cursor: 'pointer', color: 'var(--color-text-secondary)', flexShrink: 0,

@@ -49,6 +49,8 @@ function getCurrentContext(): string {
 }
 
 export function ChatPanel({ onClose }: { onClose: () => void }) {
+  const [closing, setClosing] = useState(false);
+  const doClose = useCallback(() => { setClosing(true); setTimeout(onClose, 250); }, [onClose]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -170,7 +172,7 @@ ${context}
       position: 'fixed', top: 56, right: 0, bottom: 0, zIndex: 25,
       width: 420, display: 'flex', flexDirection: 'column',
       background: 'var(--color-surface)', borderLeft: '1px solid var(--color-border)',
-      boxShadow: 'var(--shadow-lg)', animation: 'slideInRight 200ms cubic-bezier(0.4,0,0.2,1)',
+      boxShadow: 'var(--shadow-lg)', transform: closing ? 'translateX(420px)' : 'none', transition: 'transform 250ms cubic-bezier(0.4,0,0.2,1)', animation: closing ? 'none' : 'slideInRight 200ms cubic-bezier(0.4,0,0.2,1)',
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.7rem 1rem', borderBottom: '1px solid var(--color-border)', flexShrink: 0 }}>
@@ -185,7 +187,7 @@ ${context}
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={clear} title="清空对话" style={iconBtn}><Trash2 size={15} /></button>
           <button onClick={() => setSettingsOpen(!settingsOpen)} title="设置" style={{ ...iconBtn, color: settings.apiKey ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}><Settings size={15} /></button>
-          <button onClick={onClose} title="关闭" style={iconBtn}><X size={15} /></button>
+          <button onClick={doClose} title="关闭" style={iconBtn}><X size={15} /></button>
         </div>
       </div>
 

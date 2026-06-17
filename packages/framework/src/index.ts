@@ -6,6 +6,8 @@ export { useLocalStorage } from './hooks/useLocalStorage';
 export { useScrollProgress } from './hooks/useScrollProgress';
 export { useScrollSpy } from './hooks/useScrollSpy';
 export { useTheme } from './hooks/useTheme';
+export { ToastProvider, useToast } from './hooks/useToast';
+export { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 export { useTextSelectionQuote } from './hooks/useTextSelectionQuote';
 
 // Layout components

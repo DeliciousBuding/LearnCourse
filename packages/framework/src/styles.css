@@ -234,3 +234,4 @@ tr:hover td { background:var(--color-code-bg); }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   h2 { border-bottom-color: #ccc !important; }
 }
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
