@@ -84,7 +84,9 @@ export default function App() {
               scoreRows={examOverview?.scoreRows}
               strategyHeaders={examOverview?.strategyHeaders}
               strategyRows={examOverview?.strategyRows} />
-            {hasReviewSections && <KnowledgeMainline />}
+            {hasReviewSections && config.knowledgeNodes && (
+              <KnowledgeMainline nodes={config.knowledgeNodes} description="上图展示了课程的四大知识维度：感知 → 推理 → 学习 → 行动。建议按从左到右、从上到下的顺序复习。" />
+            )}
             {hasReviewSections && reviewData && (
               <>
                 <ReviewPriority priorities={reviewData.priorities} />

@@ -10,6 +10,7 @@ interface FigureProps {
 
 export function Figure({ src, alt = '', caption, width }: FigureProps) {
   const [lightbox, setLightbox] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <>
@@ -18,14 +19,27 @@ export function Figure({ src, alt = '', caption, width }: FigureProps) {
         position: 'relative', display: 'inline-block', maxWidth: '100%',
       }}>
         <div style={{ position: 'relative', display: 'inline-block', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+          {!loaded && (
+            <div
+              style={{
+                width: width || '100%', minHeight: 200,
+                background: 'var(--color-bg-secondary, #e5e7eb)',
+                filter: 'blur(10px)',
+                borderRadius: 8,
+              }}
+            />
+          )}
           <img
             src={src}
             alt={alt}
             loading="lazy"
+            onLoad={() => setLoaded(true)}
             onClick={() => setLightbox(true)}
             style={{
-              maxWidth: '100%', height: 'auto', display: 'block',
+              maxWidth: '100%', height: 'auto', display: loaded ? 'block' : 'none',
               width: width || undefined, cursor: 'zoom-in',
+              opacity: loaded ? 1 : 0,
+              transition: 'opacity 0.4s ease',
             }}
           />
           <button

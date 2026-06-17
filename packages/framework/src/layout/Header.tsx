@@ -1,5 +1,6 @@
 import { Moon, Sun, MessageCircle } from 'lucide-react';
 import { CourseSwitcher } from '../ui/CourseSwitcher';
+import { useI18n } from '../hooks/useI18n';
 
 interface CourseEntryLike { slug: string; title: string; }
 
@@ -19,6 +20,7 @@ interface HeaderProps {
 }
 
 export function Header({ effective, onThemeToggle, modulesStudied, checklistDone, totalModules, totalChecklist, onChatToggle, title, subtitle, courses, currentCourse, onSwitchCourse }: HeaderProps) {
+  const { t } = useI18n();
   const hasMultiple = courses && courses.length > 1;
   return (
     <header id="app-header">
@@ -37,18 +39,18 @@ export function Header({ effective, onThemeToggle, modulesStudied, checklistDone
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
             <span style={{ padding: '0.25rem 0.5rem', borderRadius: '8px', background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-              <strong style={{ color: 'var(--color-accent)' }}>{modulesStudied}</strong>/{totalModules} 模块
+              <strong style={{ color: 'var(--color-accent)' }}>{modulesStudied}</strong>/{totalModules} {t('header.modules')}
             </span>
             <span style={{ padding: '0.25rem 0.5rem', borderRadius: '8px', background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-              <strong style={{ color: 'var(--color-success)' }}>{checklistDone}</strong>/{totalChecklist} 自检
+              <strong style={{ color: 'var(--color-success)' }}>{checklistDone}</strong>/{totalChecklist} {t('header.checklist')}
             </span>
           </div>
           {onChatToggle && (
-            <button onClick={onChatToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title="AI 助手">
+            <button onClick={onChatToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title={t('header.aiChat')}>
               <MessageCircle size={16} />
             </button>
           )}
-          <button onClick={onThemeToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title={effective === 'dark' ? '切换到浅色模式' : '切换到深色模式'}>
+          <button onClick={onThemeToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '999px', border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title={effective === 'dark' ? t('header.switchLight') : t('header.switchDark')}>
             {effective === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>

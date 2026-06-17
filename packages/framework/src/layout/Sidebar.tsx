@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 import { ChevronDown, Home, BookOpen } from 'lucide-react';
+import { useI18n } from '../hooks/useI18n';
 
 interface NavLink { href: string; label: string; }
 interface NavGroup { title: string; links: NavLink[]; }
@@ -14,6 +15,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProps) {
+  const { t } = useI18n();
   const allIds = groups.flatMap(g => g.links.map(l => l.href.replace('#', '')));
   const activeId = useScrollSpy(allIds);
   const activeRef = useRef<HTMLAnchorElement>(null);
@@ -40,7 +42,7 @@ export function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: Side
     <aside id="app-sidebar">
       <div style={{ padding: '1.5rem 1rem 0.5rem' }}>
         <a href="?" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', color: 'var(--color-text-tertiary)', textDecoration: 'none', marginBottom: '0.75rem' }}>
-          <Home size={14} /> 返回首页
+          <Home size={14} /> {t('sidebar.backHome')}
         </a>
         <a href="#" style={{ display: 'block', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'Georgia, "Noto Serif SC", serif', color: 'var(--color-text)', textDecoration: 'none', lineHeight: 1.3 }}>
           LearnCourse
@@ -59,7 +61,7 @@ export function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: Side
               }}
             >
               <BookOpen size={13} />
-              <span style={{ flex: 1, textAlign: 'left' }}>{courses?.find(c => c.slug === currentCourse)?.title || '选择课程'}</span>
+              <span style={{ flex: 1, textAlign: 'left' }}>{courses?.find(c => c.slug === currentCourse)?.title || t('sidebar.selectCourse')}</span>
               <ChevronDown size={12} style={{ transform: coursesOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
             </button>
             {coursesOpen && (

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useId } from 'react';
-import mermaid from 'mermaid';
+import mermaid from 'mermaid'; /* webpackChunkName: "mermaid" */
 
 interface MermaidDiagramProps { id: string; chart: string; }
 

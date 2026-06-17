@@ -2,8 +2,10 @@ import { useState } from 'react';
 import type { ExamQuestion } from '../types';
 import { ProseBlock } from './ProseBlock';
 import { ChevronRight } from 'lucide-react';
+import { useI18n } from '../hooks/useI18n';
 
 export function ExamQuestion({ question }: { question: ExamQuestion }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,7 +29,7 @@ export function ExamQuestion({ question }: { question: ExamQuestion }) {
           {question.position}{question.points > 0 ? ` · ${question.points} 分` : ''}
         </span>
         <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
-          {open ? '收起答案' : '点击查看答案'}
+          {open ? t('exam.hideAnswer') : t('exam.showAnswer')}
         </span>
       </button>
 

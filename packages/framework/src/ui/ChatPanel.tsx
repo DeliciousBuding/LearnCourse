@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Loader2, Settings, Trash2, BookOpen, Brain, HelpCircle, FileText } from 'lucide-react';
+import { useI18n } from '../hooks/useI18n';
 
 interface Message { role: 'user' | 'assistant'; content: string; }
 interface ChatSettings { apiKey: string; baseUrl: string; model: string; }
@@ -49,6 +50,7 @@ function getCurrentContext(): string {
 }
 
 export function ChatPanel({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n();
   const [closing, setClosing] = useState(false);
   const doClose = useCallback(() => { setClosing(true); setTimeout(onClose, 250); }, [onClose]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -185,9 +187,9 @@ ${context}
           )}
         </div>
         <div style={{ display: 'flex', gap: 4 }}>
-          <button onClick={clear} title="清空对话" style={iconBtn}><Trash2 size={15} /></button>
-          <button onClick={() => setSettingsOpen(!settingsOpen)} title="设置" style={{ ...iconBtn, color: settings.apiKey ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}><Settings size={15} /></button>
-          <button onClick={doClose} title="关闭" style={iconBtn}><X size={15} /></button>
+          <button onClick={clear} title={t('common.clear')} style={iconBtn}><Trash2 size={15} /></button>
+          <button onClick={() => setSettingsOpen(!settingsOpen)} title={t('common.settings')} style={{ ...iconBtn, color: settings.apiKey ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}><Settings size={15} /></button>
+          <button onClick={doClose} title={t('common.close')} style={iconBtn}><X size={15} /></button>
         </div>
       </div>
 
@@ -201,7 +203,7 @@ ${context}
           <label style={labelStyle}>Model</label>
           <input value={settings.model} onChange={e => saveSettings({ ...settings, model: e.target.value })} style={inputStyle} />
           <p style={{ fontSize: '0.7rem', color: 'var(--color-text-tertiary)', marginTop: 4 }}>
-            🔒 Key 仅存储在当前浏览器会话中，关闭标签页即清除
+            {t('chat.privacyNote')}
           </p>
         </div>
       )}
@@ -230,8 +232,8 @@ ${context}
               ))}
             </div>
             <div style={{ textAlign: 'center', color: 'var(--color-text-tertiary)', fontSize: '0.8rem' }}>
-              <p>👈 选中正文可自动引用</p>
-              <p style={{ fontSize: '0.72rem', marginTop: 4 }}>或直接输入问题开始对话</p>
+              <p>{t('chat.emptyHint')}</p>
+              <p style={{ fontSize: '0.72rem', marginTop: 4 }}>{t('chat.emptyHint2')}</p>
             </div>
           </div>
         )}
@@ -252,7 +254,7 @@ ${context}
       <div style={{ display: 'flex', gap: 6, padding: '0.6rem 0.8rem', borderTop: '1px solid var(--color-border)', flexShrink: 0 }}>
         <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder={settings.apiKey ? '输入问题，或点击上方快捷操作...' : '请先设置 API Key'} disabled={loading}
+          placeholder={settings.apiKey ? t('chat.placeholder') : t('chat.needKey')} disabled={loading}
           style={{ flex: 1, padding: '0.45rem 0.7rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '0.85rem', outline: 'none' }} />
         <button onClick={() => send()} disabled={loading} style={{
           width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',

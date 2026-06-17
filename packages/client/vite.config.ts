@@ -3,16 +3,20 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  base: '/LearnCourse/',
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@courses': path.resolve(__dirname, '../../courses'),
-    },
-  },
   server: {
-    port: 5199,
+    port: 5299,
     strictPort: true,
     fs: { allow: ['..', '../..'] },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/mermaid')) return 'mermaid';
+          if (id.includes('node_modules/katex')) return 'katex';
+        },
+      },
+    },
   },
 })

@@ -1,9 +1,11 @@
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useI18n } from '../hooks/useI18n';
 import { Check } from 'lucide-react';
 
 interface StudiedToggleProps { moduleId: string; onToggle?: (studied: boolean) => void; }
 
 export function StudiedToggle({ moduleId, onToggle }: StudiedToggleProps) {
+  const { t } = useI18n();
   const [studied, setStudied] = useLocalStorage<Record<string, boolean>>('ai-modules', {});
   const isStudied = !!studied[moduleId];
 
@@ -16,7 +18,7 @@ export function StudiedToggle({ moduleId, onToggle }: StudiedToggleProps) {
   return (
     <button
       onClick={toggle}
-      title={isStudied ? '标记为未复习' : '标记为已复习'}
+      title={isStudied ? t('studied.markUnstudied') : t('studied.markStudied')}
       style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
         width: 20, height: 20, border: `2px solid ${isStudied ? 'var(--color-success)' : 'var(--color-border)'}`,

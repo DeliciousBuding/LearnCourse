@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useI18n } from '../hooks/useI18n';
 import type { ChecklistItem } from '../types';
 
 interface ChecklistProps { items: ChecklistItem[]; onCountChange?: (count: number) => void; }
 
 export function Checklist({ items, onCountChange }: ChecklistProps) {
+  const { t } = useI18n();
   const [checked, setChecked] = useLocalStorage<Record<string, boolean>>('ai-checklist', {});
   const doneCount = Object.values(checked).filter(Boolean).length;
 
@@ -15,7 +17,7 @@ export function Checklist({ items, onCountChange }: ChecklistProps) {
   return (
     <div role="group" aria-label="考前自检清单">
       <div style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '0.6rem' }}>
-        已完成：<strong style={{ color: 'var(--color-accent)' }}>{doneCount}</strong> / {items.length}
+        {t('checklist.done')}<strong style={{ color: 'var(--color-accent)' }}>{doneCount}</strong> / {items.length}
       </div>
       {items.map(item => {
         const isDone = !!checked[item.id];
