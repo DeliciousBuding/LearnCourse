@@ -6,24 +6,17 @@ interface SlidePanelProps {
   moduleId: string;
   courseware: string;
   page?: number;
+  pdfFile?: string;
   onClose: () => void;
 }
 
-const SLIDE_PDFS: Record<string, string> = {
-  s1: '01智能AGENT.pdf',  s2: '02搜索.pdf',  s3: '04超越经典搜索算法.pdf',
-  s4: '05对抗搜索.pdf',  s5: '07约束满足问题.pdf',  s6: '08逻辑Agent.pdf',
-  s7: '11贝叶斯网络.pdf',  s8: '12时间上的概率推理.pdf',
-  s9: '13从自然语言处理到大语言模型.pdf',  s10: '13从自然语言处理到大语言模型.pdf',
-  s11: '14计算机视觉.pdf',
-};
-
-export function SlidePanel({ moduleId, courseware, page, onClose }: SlidePanelProps) {
+export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: SlidePanelProps) {
   const [width, setWidth] = useLocalStorage('slide-panel-width', 480);
   const [loading, setLoading] = useState(true);
   const dragging = useRef(false);
   const startX = useRef(0);
   const startW = useRef(0);
-  const pdfFile = SLIDE_PDFS[moduleId];
+  const resolvedPdfFile = pdfFile;
 
   // Drag resize
   const onMouseDown = useCallback((e: React.MouseEvent) => {
@@ -96,8 +89,8 @@ export function SlidePanel({ moduleId, courseware, page, onClose }: SlidePanelPr
             课件加载中...
           </div>
         )}
-        {pdfFile ? (
-          <iframe src={`/slides/${pdfFile}?toolbar=0&navpanes=0${page ? '#page=' + page : ''}`}
+        {resolvedPdfFile ? (
+          <iframe src={`/slides/${resolvedPdfFile}?toolbar=0&navpanes=0${page ? '#page=' + page : ''}`}
             style={{ width: '100%', height: '100%', border: 'none', opacity: loading ? 0 : 1, transition: 'opacity .2s' }}
             onLoad={() => setLoading(false)} title={courseware} />
         ) : (
