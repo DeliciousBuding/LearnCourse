@@ -1,5 +1,5 @@
 /** Auto-discovery course registry — drop a directory in courses/ and it works */
-import type { ReviewConfig } from '@learncourse/framework/types';
+import type { ReviewConfig } from 'learncourse/types';
 
 export interface CourseEntry {
   slug: string;
