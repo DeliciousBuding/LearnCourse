@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Search, X, CornerDownLeft, ChevronRight } from 'lucide-react';
-import { useI18n } from '../hooks/useI18n';
 
 interface SearchResult {
   moduleId: string;
@@ -58,7 +57,6 @@ function buildIndex(): SearchResult[] {
 }
 
 export function SearchDialog({ open, onClose }: SearchDialogProps) {
-  const { t: i18n } = useI18n();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [closing, setClosing] = useState(false);

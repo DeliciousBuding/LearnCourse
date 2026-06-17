@@ -1,4 +1,4 @@
-import { Moon, Sun, MessageCircle } from 'lucide-react';
+import { Moon, Sun, MessageCircle, Search } from 'lucide-react';
 import { CourseSwitcher } from '../ui/CourseSwitcher';
 import { useI18n } from '../hooks/useI18n';
 
@@ -12,6 +12,7 @@ interface HeaderProps {
   totalModules: number;
   totalChecklist: number;
   onChatToggle?: () => void;
+  onSearchToggle?: () => void;
   title?: string;
   subtitle?: string;
   courses?: CourseEntryLike[];
@@ -19,7 +20,7 @@ interface HeaderProps {
   onSwitchCourse?: (slug: string) => void;
 }
 
-export function Header({ effective, onThemeToggle, modulesStudied, checklistDone, totalModules, totalChecklist, onChatToggle, title, subtitle, courses, currentCourse, onSwitchCourse }: HeaderProps) {
+export function Header({ effective, onThemeToggle, modulesStudied, checklistDone, totalModules, totalChecklist, onChatToggle, onSearchToggle, title, subtitle, courses, currentCourse, onSwitchCourse }: HeaderProps) {
   const { t } = useI18n();
   const hasMultiple = courses && courses.length > 1;
   return (
@@ -45,6 +46,11 @@ export function Header({ effective, onThemeToggle, modulesStudied, checklistDone
               <strong style={{ color: 'var(--color-success)' }}>{checklistDone}</strong>/{totalChecklist} {t('header.checklist')}
             </span>
           </div>
+          {onSearchToggle && (
+            <button onClick={onSearchToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title="搜索 (Ctrl+K)">
+              <Search size={16} />
+            </button>
+          )}
           {onChatToggle && (
             <button onClick={onChatToggle} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: '1px solid var(--color-border)', background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }} title={t('header.aiChat')}>
               <MessageCircle size={16} />

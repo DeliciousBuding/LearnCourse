@@ -73,6 +73,7 @@ export default function App() {
         modulesStudied={modulesStudied} checklistDone={checklistDone}
         totalModules={config.modules.length} totalChecklist={config.checklist.length}
         onChatToggle={() => setChatOpen(!chatOpen)}
+        onSearchToggle={() => setShowSearch(true)}
         title={config.title} subtitle={config.subtitle}
         courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
       <Sidebar groups={config.navGroups} courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
