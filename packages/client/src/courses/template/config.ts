@@ -40,3 +40,4 @@ export const templateConfig: ReviewConfig = {
 
   moduleLoader: (moduleId: string) => import(`./modules/module-${moduleId}.ts`).then(m => m.default),
 };
+export const courseConfig = templateConfig;
