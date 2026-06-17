@@ -566,6 +566,87 @@ const content: ModuleContent = {
         }
       ]
     }
+  ,
+    {
+      "id": "s6-s-trace",
+      "title": "汇编追踪实战：分块阅读 + 跳转口诀",
+      "content": [
+        {
+          "type": "prose",
+          "html": "<p>看汇编就像看菜谱：每行指令是做一件事，组合起来就是一道程序。但很多同学一看到满屏的 <code>mov</code>/<code>jmp</code>/<code>call</code>，本能地从头逐句硬读——这就像看菜谱从第一行读到第一百行，看完也不知道这道菜是怎么做的。</p>"
+        },
+        {
+          "type": "prose",
+          "html": "<p>本节教你两个实战技巧：<strong>分块阅读</strong>和<strong>跳转方向判断</strong>。用上它们，再复杂的汇编也能在 30 秒内理出结构骨架。</p>"
+        },
+        {
+          "type": "prose",
+          "html": "<h3>技巧一：分块阅读法——给汇编\"分色\"</h3><p>面对一大段汇编，不要从第一句逐句读。先扫一遍，按功能分成 5 种颜色的\"积木块\"。分完块之后，每一块的功能就一目了然了——你甚至不需要逐条理解每行指令，光看\"块\"就能还原出 C 代码的结构。</p><div style=\"background:var(--color-surface);border-radius:8px;padding:16px;margin:12px 0;border:1px solid var(--color-border)\"><p style=\"margin:6px 0\"><span style=\"display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:2px;margin-right:8px;vertical-align:middle\"></span><strong style=\"color:#3b82f6\">初始化块</strong>——<code>pushl %ebp; movl %esp,%ebp; subl $N,%esp</code>（函数开头的标准\"三件套\"，看到它就画一条横线隔开——这是函数边界）</p><p style=\"margin:6px 0\"><span style=\"display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:2px;margin-right:8px;vertical-align:middle\"></span><strong style=\"color:#22c55e\">变量赋值块</strong>——<code>movl $常数, 偏移(%ebp)</code> 或 <code>movl $常数, 偏移(%esp)</code>（把常数往栈上塞——在初始化局部变量，比如 <code>int x = 0;</code>）</p><p style=\"margin:6px 0\"><span style=\"display:inline-block;width:12px;height:12px;background:#eab308;border-radius:2px;margin-right:8px;vertical-align:middle\"></span><strong style=\"color:#eab308\">条件判断块</strong>——<code>cmpl</code> + <code>jxx</code> 配对出现（比较完紧跟着条件跳转——在实现 if 条件或循环终止条件）</p><p style=\"margin:6px 0\"><span style=\"display:inline-block;width:12px;height:12px;background:#ef4444;border-radius:2px;margin-right:8px;vertical-align:middle\"></span><strong style=\"color:#ef4444\">循环体块</strong>——注意跳转方向！（往<strong>前</strong>跳回=循环体，往<strong>后</strong>跳过=分支体——见技巧二）</p><p style=\"margin:6px 0\"><span style=\"display:inline-block;width:12px;height:12px;background:#8b5cf6;border-radius:2px;margin-right:8px;vertical-align:middle\"></span><strong style=\"color:#8b5cf6\">函数调用块</strong>——<code>push</code> 参数 → <code>call</code> 函数名 → <code>mov %eax, ...</code>（取返回值）</p></div><p>拿到一段汇编，先用 10 秒把这 5 种颜色在心里标一遍，结构立刻就清楚了。剩下的只是填空——哪条 mov 对应哪句 C 赋值。</p>"
+        },
+        {
+          "type": "callout",
+          "variant": "tip",
+          "text": "口诀：\"后if前for\"——记住这四个字就能判断控制流。if/else 的分支代码在跳转指令的后面（往后跳，跳过不执行的块）；循环体的代码在跳转指令的前面（往前跳，跳回循环开头再执行一次）。看到 jmp 或 jxx 往上（回）跳的，就是循环；往下（过）跳的，就是分支。考场上在试卷上画个箭头标方向，永远不会搞反。"
+        },
+        {
+          "type": "prose",
+          "html": "<h3>动手追踪：一个最小示例</h3><p>下面这段 7 行汇编实现了一个简单的 if 判断。逐行看注释，体会\"分块 + 方向\"怎么用：</p>"
+        },
+        {
+          "type": "code",
+          "language": "asm",
+          "code": "    movl $0, -4(%ebp)       ; [绿] int x = 0（局部变量 x 在 ebp-4）\n    movl 8(%ebp), %eax      ; [绿] 取第一个参数到 eax\n    cmpl $10, %eax          ; [黄] 比较参数和 10（设标志位）\n    jle .L1                 ; [黄→红] 若 <=10，往后跳到 .L1（跳过 x++）\n    addl $1, -4(%ebp)       ; [红] x++（只有参数 > 10 才执行到这里）\n.L1:\n    movl -4(%ebp), %eax     ; [绿] return x（结果放进 eax）"
+        },
+        {
+          "type": "prose",
+          "html": "<p>一眼扫过去：前三行是变量赋值+比较，第四行 <code>jle .L1</code> 往<strong>后</strong>跳（.L1 标签在下面）——\"后if前for\"，所以这是 if。还原成 C 就是：<code>if (参数 > 10) x++;</code> 然后 <code>return x;</code>。</p>"
+        },
+        {
+          "type": "prose",
+          "html": "<h3>练习1：识别控制流</h3><p>下面这段约 15 行的汇编，请判断——它在实现 <strong>if-else 分支</strong>还是 <strong>for/while 循环</strong>？从哪里看出来的？先自己分析，再看下面的答案。</p>"
+        },
+        {
+          "type": "code",
+          "language": "asm",
+          "code": "func:\n    pushl %ebp\n    movl %esp, %ebp\n    subl $12, %esp\n    movl $1, -4(%ebp)        ; fact = 1\n    movl $1, -8(%ebp)        ; i = 1\n    jmp .L2                   ; 先跳到条件判断\n.L3:\n    movl -4(%ebp), %eax      ; eax = fact\n    imull -8(%ebp), %eax     ; eax = fact * i\n    movl %eax, -4(%ebp)      ; fact = eax\n    addl $1, -8(%ebp)        ; i++\n.L2:\n    movl 8(%ebp), %eax       ; eax = n（参数）\n    cmpl %eax, -8(%ebp)      ; 比较 i 和 n\n    jle .L3                   ; 若 i<=n，跳回 .L3 ← 注意方向！\n    movl -4(%ebp), %eax      ; return fact\n    leave\n    ret"
+        },
+        {
+          "type": "prose",
+          "html": "<details style=\"margin:12px 0\"><summary style=\"cursor:pointer;font-weight:600;color:var(--color-primary);padding:8px 0\">点击查看答案</summary><div style=\"padding:12px;background:var(--color-surface);border-radius:8px;margin-top:8px\"><p><strong>答案：这是 for 循环（计算阶乘 n!）。</strong></p><p><strong>判断依据——看跳转方向：</strong></p><p>关键指令是倒数第三行的 <code>jle .L3</code>——它往<strong>上（前）</strong>跳，跳回第 7 行的 <code>.L3</code> 标签。按\"后if前for\"口诀：<strong>往前跳 = 循环</strong>。</p><p><strong>辅助证据：</strong></p><ul><li>有初始化（fact=1, i=1）</li><li>有循环体（fact *= i; i++）</li><li>有条件判断（i <= n）</li><li>有回跳（jle .L3 跳回循环体）</li></ul><p>四个部件齐全，确认是循环。还原成 C 就是：<code>for (i=1, fact=1; i<=n; i++) fact *= i; return fact;</code></p><p><strong>反过来想：</strong>如果是 if-else，<code>jle</code> 会往<strong>下（后）</strong>跳——跳过不执行的代码块。而这里的 <code>jle</code> 往上跳，要\"回去再跑一遍\"，只能是循环。</p></div></details>"
+        },
+        {
+          "type": "prose",
+          "html": "<h3>练习2：手写栈帧图</h3><p>给定以下 C 函数和调用：</p>"
+        },
+        {
+          "type": "code",
+          "language": "c",
+          "code": "int max(int a, int b) {\n    int result;\n    if (a >= b) {\n        result = a;\n    } else {\n        result = b;\n    }\n    return result;\n}\n// 调用：max(3, 7)"
+        },
+        {
+          "type": "prose",
+          "html": "<p>假设函数已经执行完 <code>push ebp; mov ebp, esp; sub esp, 4</code>（序言完成）。请在一张纸上画出此时的栈帧图，标出：返回地址、旧 EBP、参数 a、参数 b、局部变量 result 各自的位置和对应的 ebp 偏移。</p><p>画完之后对照下面的答案。</p>"
+        },
+        {
+          "type": "prose",
+          "html": "<details style=\"margin:12px 0\"><summary style=\"cursor:pointer;font-weight:600;color:var(--color-primary);padding:8px 0\">点击查看答案——完整栈帧图</summary><div style=\"padding:12px;background:var(--color-surface);border-radius:8px;margin-top:8px\">"
+        },
+        {
+          "type": "code",
+          "language": "",
+          "code": "高地址（栈底方向）\n  +-----------------------------+\n  |      参数 b = 7             |  ← ebp+12（第二个参数，后入栈所以在高地址）\n  +-----------------------------+\n  |      参数 a = 3             |  ← ebp+8（第一个参数）\n  +-----------------------------+\n  |      返回地址               |  ← ebp+4（call 指令自动压入，函数返回后 PC 回到这里）\n  +-----------------------------+\n  |      旧 ebp                 |  ← ebp 指向这里（调用者的帧指针，push ebp 压入）\n  +-----------------------------+\n  |   result（局部变量）        |  ← ebp-4, esp 指向这里（sub esp,4 分配的空间）\n  +-----------------------------+\n低地址（栈顶方向）"
+        },
+        {
+          "type": "prose",
+          "html": "<p><strong>关键记忆点：</strong></p><ul><li>ebp 往<strong>上</strong>（高地址）= 正偏移 = 参数和返回地址。跳过旧 ebp(4字节)+返回地址(4字节)，第一个参数从 +8 开始。</li><li>ebp 往<strong>下</strong>（低地址）= 负偏移 = 局部变量。第一个局部变量从 -4 开始。</li><li>参数从右往左入栈：b 先入（高地址），a 后入（低地址），所以 b 在 ebp+12，a 在 ebp+8。</li><li>esp 始终指向栈顶（最低地址）。</li></ul></div></details>"
+        },
+        {
+          "type": "callout",
+          "variant": "warning",
+          "text": "初学者最容易混淆的三件事：（1）8(%ebp) 是第 1 个参数，不是第 0 个——因为 0(%ebp) 存的是旧 EBP，4(%ebp) 存的是返回地址，两个各占 4 字节，所以第一个参数从 +8 开始。（2）leal 是取地址不是取内容——leal = Load Effective Address = C 语言的 & 运算符，leal -4(%ebp), %eax 是把 ebp-4 这个地址值放进 eax，不是去读 [ebp-4] 的内容。（3）movl (%eax), %ebx 和 movl %eax, %ebx 完全不同——括号代表间接访问（解引用），(%eax) 是以 eax 的值为地址去内存取数据；没有括号就是直接复制寄存器的值。考试填空时括号的有无经常是 0 分和满分的区别。"
+        }
+      ]
+    }
   ]
 };
 

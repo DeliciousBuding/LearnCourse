@@ -1,6 +1,8 @@
 import type { ReviewConfig, KnowledgeNode } from '@learncourse/framework/types';
 import { QUIZZES } from './quizzes';
+import { NEW_AI_QUIZZES } from './quizzesNew';
 import { EXAM_QUESTIONS } from './examQuestions';
+import { NEW_AI_EXAM_QUESTIONS } from './examQuestionsNew';
 import { CHECKLIST } from './checklist';
 import { AI_INTRO_PRIORITIES, AI_INTRO_ROUNDS, AI_INTRO_EXAM_ENTRIES, AI_INTRO_COURSEWARE_ROWS } from './reviewData';
 
@@ -71,8 +73,8 @@ export const aiIntroConfig: ReviewConfig = {
     { id: 's11', number: 11, title: '深度学习 & CNN', icon: 'Layers', courseware: '14 计算机视觉.pptx', examRefs: '概念题为主' },
   ],
 
-  quizzes: QUIZZES,
-  examQuestions: EXAM_QUESTIONS,
+  quizzes: [...QUIZZES, ...NEW_AI_QUIZZES],
+  examQuestions: [...EXAM_QUESTIONS, ...NEW_AI_EXAM_QUESTIONS],
   checklist: CHECKLIST,
 
   hasReviewSections: true,

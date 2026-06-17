@@ -61,19 +61,7 @@ export const csConfig: ReviewConfig = {
 
   quizzes: [],
   examQuestions: [],
-  checklist: [
-    { id: '1', text: '能正确进行二进制/十六进制/十进制互转' },
-    { id: '2', text: '理解补码表示，能判断溢出' },
-    { id: '3', text: '能手算 IEEE 754 单精度浮点数' },
-    { id: '4', text: '能阅读基础汇编代码，理解 mov/lea/add/sub/cmp/jmp 指令' },
-    { id: '5', text: '能手绘栈帧图，理解 call/ret 过程' },
-    { id: '6', text: '理解 ELF 结构，能分析符号解析（强/弱符号）' },
-    { id: '7', text: '理解 fork/execve/wait，能手算 fork 输出' },
-    { id: '8', text: '能分解内存地址（Tag/Set/Offset），判断 Cache 命中/缺失' },
-    { id: '9', text: '能绘制虚拟地址翻译流程图（VA→PA，含 TLB 和页表）' },
-    { id: '10', text: '理解局部性原理和 Cache 优化策略' },
-  ],
-
+  checklist: CHECKLIST,
   examOverview: { tipText:'计算机系统——从应用程序到底层实现', scoreHeaders:['题型','2025期末','分值'], scoreRows:[['浮点数/信息表示','第1题','10分'],['程序填空(C汇编)','第2-3题','25分'],['栈帧分析','第4题','15分'],['链接+信号+优化','第5题','25分'],['VM+Cache联合','第6题','25分']], strategyHeaders:['层级','模块','策略'], strategyRows:[['必拿分','VM地址翻译+Cache地址分解(50分)','必须会手算'],['必拿分','机器级表示(栈帧+汇编,40分)','能手绘栈帧'],['高频概念','链接+ECF(fork+信号)','标准简答'],['保底覆盖','浮点数+安全+性能优化','掌握概念']] },
   moduleLoader: (moduleId: string) => import(`./modules/module-${moduleId}.ts`).then(m => m.default),
 };

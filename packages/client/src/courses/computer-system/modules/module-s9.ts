@@ -322,7 +322,58 @@ const content: ModuleContent = {
       { type: "quiz", ids: ["q-s9-1", "q-s9-2"] }
     ]
   }
-],
+,
+    {
+      "id": "s9-s-trace",
+      "title": "9.X Cache实战三步法——从零开始拆地址",
+      "content": [
+        {
+          "type": "prose",
+          "html": "<p>假设你在图书馆写论文。你面前的书桌只能放<strong>5本书</strong>（这就是 Cache），但图书馆书架上有几万本（这就是主存）。你要反复查阅几本核心参考书——如果放在桌上，伸手就能拿到（<strong>命中</strong>）；如果不在桌上，你得走去书架找，来回要花很多时间（<strong>缺失</strong>）。</p><p><strong>Cache 就是 CPU 面前的那张小书桌。</strong>CPU 的计算速度极快（不到 1ns 就能执行一条指令），但主存 DRAM 的访问速度慢 10~100 倍。没有 Cache，CPU 每取一条指令或一个数据都要等内存——就像一个每分钟能炒 10 盘菜的大厨，每次拿调料都要跑 5 分钟仓库。</p><p>这一节不讲概念，直接上手算。我们用<strong>\"三步法\"</strong>把任何 Cache 计算题拆成标准流程——掌握了这个套路，考试中 Cache 那部分的分就稳了。</p>"
+        },
+        {
+          "type": "card",
+          "title": "核心工具：三步拆地址法",
+          "body": "<div class=\"card\">\n<table>\n<tr><th>步骤</th><th>算什么</th><th>公式</th><th>说明</th></tr>\n<tr><td><strong>第1步</strong></td><td>块偏移 b</td><td>b = log₂(块大小)</td><td>块是 Cache 和内存之间搬数据的最小单位。块大小总是 2 的幂（4B/8B/16B/32B/64B）。</td></tr>\n<tr><td><strong>第2步-a</strong></td><td>组数 S</td><td>S = Cache总大小 ÷ (块大小 × E路数)</td><td>E=1是直接映射，E=2/4/8是组相联，E=全部行是全相联。</td></tr>\n<tr><td><strong>第2步-b</strong></td><td>组索引 s</td><td>s = log₂(S)</td><td>s 位用来定位\"去哪个组找\"。</td></tr>\n<tr><td><strong>第3步</strong></td><td>标记位 t</td><td>t = 地址总位数 - s - b</td><td>剩下的高位全给 Tag，用来\"到了组里确认是不是这块\"。</td></tr>\n</table>\n<p style=\"margin-top:8px;\"><strong>记忆口诀：\"先b再S再s，最后一减得大t\"</strong></p>\n<p style=\"margin-top:4px;\"><strong>验证秘诀：</strong>算完检查 t + s + b 是否等于地址总位数。不相等就是算错了。</p>\n</div>"
+        },
+        {
+          "type": "card",
+          "title": "三种映射方式——用图书馆书桌比喻",
+          "body": "<div class=\"card\">\n<p><strong>直接映射（E=1）：</strong>每本书只能放在书桌上<strong>固定位置</strong>——比如《计算机系统》只能放左上角。来了就往那个位置放，位置被占了就把旧书拿走。实现最简单，但两本热门书如果\"指定\"同一个位置，就会互相踢来踢去（冲突不命中高）。</p>\n<p><strong>全相联（E=全部行，S=1）：</strong>书可以放在书桌<strong>任何位置</strong>——最灵活，绝对不会因为\"固定位置\"而打架。但找书的时候要翻遍整张桌子（同时比较所有行的 Tag），硬件太贵。一般只用在 TLB 这种条目很少（几十条）的地方。</p>\n<p><strong>组相联 E 路（E=2/4/8）：</strong>把书桌分成若干\"小组\"，每本书可以在<strong>自己那组的 E 个位置中任选一个</strong>。这是折中方案——既有一定灵活性（减少冲突），又不用翻遍整张桌子（只需在组内比较 E 行）。现代 CPU 的 L1 Cache 通常是 8 路组相联。</p>\n<p style=\"margin-top:8px;\"><strong>一句话记忆：E=1（直接映射）最简单，E=全部（全相联）最灵活，E=2/4/8（组相联）最实用。</strong></p>\n</div>"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "╔══════════════════════════════════════════════════════════╗\n║          Cache 手工追踪模板 —— 考试必须按这个写        ║\n╚══════════════════════════════════════════════════════════╝\n\n【假设条件】地址 8 位，Cache 32B，2 路组相联，块大小 4B\n\n▸ 第1步——求 b：\n  b = log₂(块大小) = log₂(4) = 2 位\n\n▸ 第2步——求 S 和 s：\n  S = Cache总大小 / (块大小 × E路数) = 32 / (4 × 2) = 4 组\n  s = log₂(S) = log₂(4) = 2 位\n\n▸ 第3步——求 t：\n  t = 地址总位数 - s - b = 8 - 2 - 2 = 4 位\n\n▸ 地址格式（画在草稿纸上！）：\n  0b [tttt][ss][bb] = [Tag:4bit][Index:2bit][Offset:2bit]\n\n  ┌──────────┬──────────┬──────────┐\n  │ Tag:4位  │Index:2位 │Offset:2位│\n  └──────────┴──────────┴──────────┘\n     [7:4]      [3:2]      [1:0]\n\n\n【实战：拆地址 0x5C】\n\n  0x5C = 0b 0101 1100\n\n           ┌──────┬────┬────┐\n           │ 0101 │ 11 │ 00 │\n           └──────┴────┴────┘\n             Tag   Idx  Off\n\n  偏移   = 00 (低2位)      → 块内第 0 字节\n  组索引 = 11 (中间2位)    → 去第 3 组\n  标记   = 0101 (高4位)    → Tag = 0x5\n\n▸ 判断命中：\n  去组 3，逐一检查组内两行的 Tag 和 Valid bit：\n\n  ┌─────────────────────────────────────┐\n  │ 路0: Valid=1, Tag=0x5 → 匹配！HIT ✓ │\n  │ 路1: Valid=1, Tag=0xA → 不匹配      │\n  └─────────────────────────────────────┘\n\n  → 命中！从路 0 的块中取 offset=0 位置的字节\n\n  如果两路都不匹配 → MISS → 从主存取整个块(4B)\n  → 找组内 LRU 最老的那一路替换 → 更新 Tag → Valid=1"
+        },
+        {
+          "type": "details",
+          "summary": "练习1：参数计算——某机地址32位，Cache 8KB，4路组相联，块大小16B。求b、S、s、t。",
+          "body": "<details>\n<div class=\"details-body\">\n<p><strong>题目：</strong>某机地址 32 位，Cache 8KB，4 路组相联，块大小 16B。求 b、S、s、t。</p>\n<p><strong>按三步法依次求解：</strong></p>\n<ol>\n<li><strong>第1步——b：</strong>块大小 B = 16 = 2⁴ → <strong>b = log₂(16) = 4</strong></li>\n<li><strong>第2步——S 和 s：</strong>S = C / (E × B) = 8192 / (4 × 16) = 8192 / 64 = <strong>128 组</strong><br/>s = log₂(128) = <strong>7</strong></li>\n<li><strong>第3步——t：</strong>t = m - s - b = 32 - 7 - 4 = <strong>21</strong></li>\n</ol>\n<p><strong>答案：</strong>b = 4, S = 128 组, s = 7, t = 21</p>\n<p><strong>验证：</strong>t + s + b = 21 + 7 + 4 = 32 ✓（等于地址总位数，正确）</p>\n<p><strong>地址布局（从高位到低位）：</strong></p>\n<pre><code>[31:11]=Tag(21位) [10:4]=Set Index(7位) [3:0]=Block Offset(4位)</code></pre>\n<p style=\"margin-top:8px;color:var(--color-text-secondary);\"><strong>易错提醒：</strong>很多人第一步就把 8KB 忘记换成字节。1KB = 1024B，8KB = 8192B。如果用 8000 去算，S 就错了。</p>\n</div>\n</details>"
+        },
+        {
+          "type": "details",
+          "summary": "练习2：地址追踪——直接映射 Cache，5 个地址序列，判断命中/缺失",
+          "body": "<details>\n<div class=\"details-body\">\n<p><strong>题目：</strong>地址 8 位，Cache 32B，直接映射（E=1），块大小 4B。访问序列：0x00, 0x04, 0x0C, 0x20, 0x04（每次读 1 字节）。逐条判断 hit/miss，计算命中率。</p>\n<p><strong>第0步——先算参数（不先算这几个数，后面全乱）：</strong></p>\n<ul>\n<li>B = 4 → <strong>b = 2</strong></li>\n<li>S = 32 / (1 × 4) = 8 → <strong>s = 3</strong></li>\n<li><strong>t = 8 - 3 - 2 = 3</strong></li>\n</ul>\n<p><strong>地址格式：</strong><code>[ttt][sss][bb]</code> = <code>[tag:3bit][index:3bit][offset:2bit]</code></p>\n<hr/>\n<p><strong>逐条追踪（考试按这个格式写）：</strong></p>\n<table>\n<tr><th>序号</th><th>地址</th><th>二进制</th><th>Tag</th><th>Index</th><th>Off</th><th>结果</th><th>原因</th></tr>\n<tr><td>1</td><td>0x00</td><td>0000 0000</td><td>000</td><td>000</td><td>00</td><td style=\"color:#991b1b;font-weight:600;\">MISS</td><td>Set0 为空，装入 M[0x00-0x03]，tag=000</td></tr>\n<tr><td>2</td><td>0x04</td><td>0000 0100</td><td>000</td><td>001</td><td>00</td><td style=\"color:#991b1b;font-weight:600;\">MISS</td><td>Set1 为空，装入 M[0x04-0x07]，tag=000</td></tr>\n<tr><td>3</td><td>0x0C</td><td>0000 1100</td><td>000</td><td>011</td><td>00</td><td style=\"color:#991b1b;font-weight:600;\">MISS</td><td>Set3 为空，装入 M[0x0C-0x0F]，tag=000</td></tr>\n<tr><td>4</td><td>0x20</td><td>0010 0000</td><td>001</td><td>000</td><td>00</td><td style=\"color:#991b1b;font-weight:600;\">MISS</td><td>Set0 tag=000≠001 → 冲突！替换为 M[0x20-0x23]，tag=001</td></tr>\n<tr><td>5</td><td>0x04</td><td>0000 0100</td><td>000</td><td>001</td><td>00</td><td style=\"color:#065f46;font-weight:600;\">HIT</td><td>Set1 tag=000 Valid=1 → 命中！（没有被踢掉）</td></tr>\n</table>\n<p><strong>命中率：1/5 = 20%</strong></p>\n<hr/>\n<p><strong>关键观察——为什么 0x20 踢掉了 0x00？</strong></p>\n<ul>\n<li>0x00 的 Index = 000（组0），0x20 的 Index 也是 000（组0）</li>\n<li>直接映射每组只有 1 行，组 0 只能同时装一块</li>\n<li>0x20 来了，组 0 已经有 0x00，只能踢掉——这就是<strong>冲突不命中</strong></li>\n</ul>\n<p><strong>如果改成 2 路组相联（E=2）：</strong></p>\n<ul>\n<li>组 0 有两行，0x00 和 0x20 可以<strong>并存</strong></li>\n<li>第 5 次访问 0x00 也会命中（不会被 0x20 踢掉）</li>\n<li>命中率从 20% → <strong>40%</strong></li>\n</ul>\n<p style=\"margin-top:8px;color:var(--color-accent);\"><strong>核心结论：增加相联度 E → 减少冲突不命中 → 提高命中率。代价是硬件更复杂、更贵。</strong></p>\n</div>\n</details>"
+        },
+        {
+          "type": "callout",
+          "variant": "warning",
+          "text": "陷阱一：进制不一致。考试最坑的地方——题目可能给你十进制地址（如 128），但 Cache 参数是十六进制的（如 Cache 大小 0x2000）。第一步必须把所有地址统一转成二进制再切字段！用二进制做\"中间语言\"最不容易出错。十进制的 128 = 0x80 = 0b 1000 0000，别在十进制下心算位宽。"
+        },
+        {
+          "type": "callout",
+          "variant": "warning",
+          "text": "陷阱二：LRU 替换规则。组相联 Cache 缺失时，找组内\"最久没有被访问过\"的那一行踢出去——不是随便选、不是踢 Tag 最大的、也不是踢最后访问的那一行。考试会给访问时间戳或使用顺序表，按\"谁的最后一次访问时间最早\"来判断踢谁。实战中画一个访问时间线，每次访问后更新对应行的时间戳。"
+        },
+        {
+          "type": "callout",
+          "variant": "danger",
+          "text": "陷阱三：忘记检查 Valid bit。即使 Tag 匹配，Valid=0 也算 MISS！Cache 刚上电时所有行的 Valid=0（空），Tag 是随机值。很多同学看到 Tag 碰巧对了就直接写 HIT——错了。必须先确认 Valid=1，再比较 Tag。命中条件 = (Valid=1) AND (Tag匹配)，两个条件缺一不可。"
+        }
+      ]
+    }
+  ],
 };
 
 export default content;
