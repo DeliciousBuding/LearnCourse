@@ -1,7 +1,7 @@
 import { Component, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { ReviewConfig } from '@learncourse/framework/types';
-import { useTheme, useLocalStorage, useTextSelectionQuote, ToastProvider } from '@learncourse/framework';
-import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
+import { useTheme, useLocalStorage, useTextSelectionQuote, ToastProvider, useKeyboardShortcuts } from '@learncourse/framework';
+import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel, SearchDialog } from '@learncourse/framework';
 import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from '@learncourse/framework';
 import { COURSES, DEFAULT_COURSE } from './courses/index';
 
@@ -31,9 +31,12 @@ export default function App() {
   const [expandAll, setExpandAll] = useState(false);
   const [slidePanel, setSlidePanel] = useState<{ moduleId: string; courseware: string; page?: number } | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [panelWidth] = useLocalStorage('slide-panel-width', 480);
 
   useTextSelectionQuote();
+
+  useKeyboardShortcuts([{ key: 'k', ctrl: true, handler: () => setShowSearch(prev => !prev) }]);
 
   const selectCourse = (slug: string) => {
     const url = new URL(location.href);
@@ -115,6 +118,7 @@ export default function App() {
       {slidePanel && <SlidePanel moduleId={slidePanel.moduleId} courseware={slidePanel.courseware}
         page={slidePanel.page} pdfFile={slidePdfs?.[slidePanel.moduleId]} onClose={() => setSlidePanel(null)} />}
       {chatOpen && <ChatPanel onClose={() => setChatOpen(false)} />}
+      <SearchDialog open={showSearch} onClose={() => setShowSearch(false)} />
     </>
     </ToastProvider>
     </ErrorBoundary>

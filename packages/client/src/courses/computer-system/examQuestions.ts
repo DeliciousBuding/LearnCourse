@@ -1,4 +1,4 @@
-import type { ExamQuestion } from 'learncourse/types';
+import type { ExamQuestion } from '@learncourse/framework/types';
 
 export const EXAM_QUESTIONS: ExamQuestion[] = [
   // ── S1 计算机系统概论 ──

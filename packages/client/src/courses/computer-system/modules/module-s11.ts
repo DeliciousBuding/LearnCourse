@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s11","number":11,"title":"性能优化","icon":"Zap","courseware":"11 性能优化.pptx","examRefs":"分析题 ~5分"};
 

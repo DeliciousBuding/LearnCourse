@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s7","number":7,"title":"不确定性量化 & 贝叶斯网络","icon":"Dice5","courseware":"10 不确定性的量化.pdf, 11 贝叶斯网络.pptx","examRefs":"2025 期末一(7)(8), 2025 期末二(3)"};
 

@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s1","number":1,"title":"基本概念与 Agent","icon":"Bot","courseware":"01 智能 Agent.pptx","examRefs":"2025 期中一(1), 2025 期中三(1)"};
 

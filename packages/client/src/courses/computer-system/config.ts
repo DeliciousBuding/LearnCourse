@@ -1,4 +1,4 @@
-import type { ReviewConfig } from 'learncourse/types';
+import type { ReviewConfig } from '@learncourse/framework/types';
 
 export const csConfig: ReviewConfig = {
   title: '计算机系统',

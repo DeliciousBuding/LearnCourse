@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s8","number":8,"title":"异常控制流与进程","icon":"GitFork","courseware":"08 进程+信号.pptx","examRefs":"分析题 ~10分"};
 

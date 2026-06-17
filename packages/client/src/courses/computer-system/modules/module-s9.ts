@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s9","number":9,"title":"存储层次与 Cache","icon":"Database","courseware":"09 Cache.pptx","examRefs":"联合大题 ~25分"};
 

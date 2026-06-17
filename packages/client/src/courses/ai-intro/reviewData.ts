@@ -1,4 +1,4 @@
-import type { PriorityModule, ReviewRound, ExamIndexEntry } from 'learncourse/types';
+import type { PriorityModule, ReviewRound, ExamIndexEntry } from '@learncourse/framework/types';
 
 export const AI_INTRO_PRIORITIES: PriorityModule[] = [
   { tier: 1, title: '必考 · 计算 + 概念', modules: ['搜索 (BFS/DFS/UCS/A*)', 'CSP', '贝叶斯网络', '命题逻辑 & 一阶逻辑'], reason: '每年必出，分值最重。能直接拉开分差的模块。' },

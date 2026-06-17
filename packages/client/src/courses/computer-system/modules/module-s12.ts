@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s12","number":12,"title":"安全攻击与防御","icon":"Shield","courseware":"12 安全+64位.pptx","examRefs":"概念题 ~3分"};
 

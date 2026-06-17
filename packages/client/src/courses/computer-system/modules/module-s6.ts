@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s6","number":6,"title":"程序的机器级表示","icon":"Cpu","courseware":"06 机器级表示.pptx","examRefs":"程序填空 ~25分 ★最高权重"};
 

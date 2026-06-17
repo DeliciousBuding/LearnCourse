@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s5","number":5,"title":"约束满足问题 CSP","icon":"Grid3x3","courseware":"07 约束满足问题.pptx","examRefs":"2025 期中一(3), 2025 期末一(4)(5), 2025 期末二(1)"};
 

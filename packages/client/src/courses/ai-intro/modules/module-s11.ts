@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s11","number":11,"title":"深度学习 & CNN","icon":"Layers","courseware":"14 计算机视觉.pptx","examRefs":"概念题为主"};
 

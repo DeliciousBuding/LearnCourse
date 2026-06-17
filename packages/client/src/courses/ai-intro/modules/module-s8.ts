@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s8","number":8,"title":"时间上的概率推理 (HMM)","icon":"Timeline","courseware":"12 时间上的概率推理.pptx","examRefs":"2025 期末计算题"};
 

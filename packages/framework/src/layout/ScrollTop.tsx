@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
+import { useI18n } from '../hooks/useI18n';
 
 export function ScrollTop() {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export function ScrollTop() {
       id="scroll-top"
       className={visible ? 'visible' : ''}
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      title="回到顶部"
+      title={t('scrollTop.title')}
     >
       <ArrowUp size={18} />
     </button>

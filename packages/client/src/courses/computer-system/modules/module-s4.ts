@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const content: ModuleContent = {
   meta: { id: "s4", number: 4, title: "汇编语言基础", icon: "Code2", courseware: "04 汇编基础.pptx", examRefs: "综合题基础" },

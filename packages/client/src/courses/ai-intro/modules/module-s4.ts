@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s4","number":4,"title":"对抗搜索","icon":"Swords","courseware":"05 对抗搜索.pptx","examRefs":"2025 期中三(3), 2025 期末一(1)(2)"};
 

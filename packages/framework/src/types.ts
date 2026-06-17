@@ -42,6 +42,8 @@ export interface ModuleContent {
 }
 
 // ── Quiz ──
+export type QuizType = 'single' | 'multiple' | 'trueFalse' | 'fillBlank';
+
 export interface QuizOption {
   text: string;
   isCorrect: boolean;
@@ -54,6 +56,10 @@ export interface Quiz {
   options: QuizOption[];
   feedbackCorrect: string;
   feedbackWrong: string;
+  type?: QuizType;
+  correctAnswers?: number[];
+  correctBool?: boolean;
+  blankAnswer?: string;
 }
 
 // ── Exam Question ──
@@ -106,6 +112,13 @@ export interface MainlineNode {
   description: string;
 }
 
+export interface KnowledgeNode {
+  id: string;
+  label: string;
+  row: number;
+  color?: 'accent' | 'success' | 'warning';
+}
+
 // ── Review Config (drives the entire app) ──
 export interface NavGroup {
   title: string;
@@ -124,6 +137,8 @@ export interface ReviewConfig {
   moduleLoader: (moduleId: string) => Promise<ModuleContent>;
   /** Enable AI-style review helper sections (KnowledgeMainline, ReviewPriority, ReviewRounds, ExamIndex) */
   hasReviewSections?: boolean;
+  /** KB nodes for KnowledgeMap. When set, KnowledgeMainline renders the map. */
+  knowledgeNodes?: KnowledgeNode[];
   reviewData?: {
     priorities: PriorityModule[];
     rounds: ReviewRound[];

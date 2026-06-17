@@ -1,5 +1,5 @@
 // Barrel export for the review framework
-export type { ModuleMeta, ModuleContent, ContentBlock, CalloutVariant, CardVariant, Quiz, QuizOption, ExamQuestion as ExamQuestionType, ChecklistItem, PriorityModule, ReviewRound, ExamIndexEntry, MainlineNode, NavGroup, ReviewConfig } from './types';
+export type { ModuleMeta, ModuleContent, ContentBlock, CalloutVariant, CardVariant, Quiz, QuizOption, QuizType, ExamQuestion as ExamQuestionType, ChecklistItem, PriorityModule, ReviewRound, ExamIndexEntry, MainlineNode, KnowledgeNode, NavGroup, ReviewConfig } from './types';
 
 // Hooks
 export { useLocalStorage } from './hooks/useLocalStorage';
@@ -49,3 +49,5 @@ export { ThemeToggle } from './ui/ThemeToggle';
 export { TierCard } from './ui/TierCard';
 export { Toolbar } from './ui/Toolbar';
 export { Badge } from './ui/Badge';
+export { MasteryRadar } from './ui/MasteryRadar';
+export { SearchDialog } from './ui/SearchDialog';

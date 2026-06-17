@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s5","number":5,"title":"整数与浮点数","icon":"Hash","courseware":"05 整数+浮点.pptx","examRefs":"简答题 ~10分"};
 

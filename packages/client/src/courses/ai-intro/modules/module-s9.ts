@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s9","number":9,"title":"机器学习","icon":"Cpu","courseware":"13 从 NLP 到 LLM.pptx","examRefs":"2025 期末简答题"};
 

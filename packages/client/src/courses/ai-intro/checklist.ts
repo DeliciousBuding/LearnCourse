@@ -1,4 +1,4 @@
-import type { ChecklistItem } from 'learncourse/types';
+import type { ChecklistItem } from '@learncourse/framework/types';
 
 export const CHECKLIST: ChecklistItem[] = [
   { id: '1', text: '能解释 Agent 定义、PEAS、四类 Agent 及任务环境七维度' },

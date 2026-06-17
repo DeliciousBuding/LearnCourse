@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s6","number":6,"title":"命题逻辑与一阶逻辑","icon":"Sigma","courseware":"08 逻辑 Agent.pptx, 09 一阶逻辑.pptx","examRefs":"2025 期中一(4)(5), 2025 期末一(6), 2025 期末二(2)"};
 

@@ -1,4 +1,4 @@
-import type { ModuleContent } from "learncourse/types";
+import type { ModuleContent } from "@learncourse/framework/types";
 
 const meta = {"id":"s10","number":10,"title":"虚拟内存 VM","icon":"HardDrive","courseware":"10 虚拟内存.pptx","examRefs":"联合大题 ~25分 · 第一优先级"};
 

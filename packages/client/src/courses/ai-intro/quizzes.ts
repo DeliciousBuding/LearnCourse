@@ -1,4 +1,4 @@
-import type { Quiz } from 'learncourse/types';
+import type { Quiz } from '@learncourse/framework/types';
 
 export const QUIZZES: Quiz[] = [
   {

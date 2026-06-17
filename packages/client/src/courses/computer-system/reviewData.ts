@@ -1,5 +1,5 @@
 // CS course review page data — extracted from framework components
-import type { ExamIndexEntry } from 'learncourse/types';
+import type { ExamIndexEntry } from '@learncourse/framework/types';
 
 export const CS_EXAM_TIP = '计算机系统 · 从应用程序到底层实现。题型：简答 + 程序填空 + 栈帧分析 + 链接/ECF综合 + VM+Cache联合大题。';
 
