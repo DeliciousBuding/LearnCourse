@@ -1,4 +1,8 @@
 import type { ReviewConfig } from '@learncourse/framework/types';
+import { QUIZZES } from './quizzes';
+import { EXAM_QUESTIONS } from './examQuestions';
+import { CHECKLIST } from './checklist';
+import { CS_EXAM_TIP, CS_SCORE_HEADERS, CS_SCORE_ROWS, CS_STRATEGY_HEADERS, CS_STRATEGY_ROWS, CS_SLIDE_PDFS, CS_EXAM_ENTRIES, CS_COURSEWARE_ROWS, CS_PRIORITIES, CS_ROUNDS } from './reviewData';
 
 export const csConfig: ReviewConfig = {
   title: '计算机系统',
@@ -59,9 +63,12 @@ export const csConfig: ReviewConfig = {
     { id: 's12', number: 12, title: '安全攻击与防御', icon: 'Shield', courseware: '12 安全+64位.pptx', examRefs: '概念题 ~3分' },
   ],
 
-  quizzes: [],
-  examQuestions: [],
+  quizzes: QUIZZES,
+  examQuestions: EXAM_QUESTIONS,
   checklist: CHECKLIST,
+  hasReviewSections: true,
+  reviewData: { priorities: CS_PRIORITIES, rounds: CS_ROUNDS, examEntries: CS_EXAM_ENTRIES, coursewareRows: CS_COURSEWARE_ROWS },
+  slidePdfs: CS_SLIDE_PDFS,
   examOverview: { tipText:'计算机系统——从应用程序到底层实现', scoreHeaders:['题型','2025期末','分值'], scoreRows:[['浮点数/信息表示','第1题','10分'],['程序填空(C汇编)','第2-3题','25分'],['栈帧分析','第4题','15分'],['链接+信号+优化','第5题','25分'],['VM+Cache联合','第6题','25分']], strategyHeaders:['层级','模块','策略'], strategyRows:[['必拿分','VM地址翻译+Cache地址分解(50分)','必须会手算'],['必拿分','机器级表示(栈帧+汇编,40分)','能手绘栈帧'],['高频概念','链接+ECF(fork+信号)','标准简答'],['保底覆盖','浮点数+安全+性能优化','掌握概念']] },
   moduleLoader: (moduleId: string) => import(`./modules/module-${moduleId}.ts`).then(m => m.default),
 };

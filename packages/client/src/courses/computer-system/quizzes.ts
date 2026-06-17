@@ -125,7 +125,7 @@ export const QUIZZES: Quiz[] = [
       { text: "-251658241", isCorrect: false },
     ],
     feedbackCorrect: "正确！小端存储低字节在低地址，故32位值为0xFFFFFFF6。补码求值：取反得0x00000009，加1得0x0A=10，故原值为-10。",
-    feedbackWrong: "不对。小端存储：地址0x100处是LSB（0xF6），0x103处是MSB（0xFF），拼出0xFFFFFFF6。逐位取反加1：~0xFFFFFFF6 = 0x00000009，+1 = 0x0A = 10，所以负数是-10。注意小端不是简单"反向读"——整数的高位字节在高地址。C选项对应的是把0xF6当作MSB按大端解读的结果。",
+    feedbackWrong: "不对。小端存储：地址0x100处是LSB（0xF6），0x103处是MSB（0xFF），拼出0xFFFFFFF6。逐位取反加1：~0xFFFFFFF6 = 0x00000009，+1 = 0x0A = 10，所以负数是-10。注意小端不是简单「反向读「——整数的高位字节在高地址。C选项对应的是把0xF6当作MSB按大端解读的结果。",
     type: "single"
   },
   {
@@ -154,8 +154,8 @@ export const QUIZZES: Quiz[] = [
       { text: "jl .L1", isCorrect: false },
       { text: "jge .L1", isCorrect: false },
     ],
-    feedbackCorrect: "正确！cmpl %edx, %eax 计算 a-b 并设标志位。若a<=b为真，应执行addl(if体)；若a>b为假，应跳转到.L1(else体)。因此需要"a>b时跳转"的指令：jg（signed greater）。注意if/else模式中，条件为假时往后跳转。",
-    feedbackWrong: "不对。分析关键点：(1) cmpl S2, S1 计算 S1-S2=a-b。(2) 紧接的addl是if体(a<=b时执行)，.L1是else体(a>b时执行)。(3) 因此方框处应在a>b时跳过if体进入else，即jump if greater→jg .L1。jle表示a<=b时跳（方向反了），jl漏掉了a==b的情况，jge是a>=b时跳。注意if条件成立时"执行下一条再jmp越过else"，条件失败时"跳入else"——这与高级语言的直觉恰好相反。",
+    feedbackCorrect: "正确！cmpl %edx, %eax 计算 a-b 并设标志位。若a<=b为真，应执行addl(if体)；若a>b为假，应跳转到.L1(else体)。因此需要「a>b时跳转「的指令：jg（signed greater）。注意if/else模式中，条件为假时往后跳转。",
+    feedbackWrong: "不对。分析关键点：(1) cmpl S2, S1 计算 S1-S2=a-b。(2) 紧接的addl是if体(a<=b时执行)，.L1是else体(a>b时执行)。(3) 因此方框处应在a>b时跳过if体进入else，即jump if greater→jg .L1。jle表示a<=b时跳（方向反了），jl漏掉了a==b的情况，jge是a>=b时跳。注意if条件成立时「执行下一条再jmp越过else「，条件失败时「跳入else「——这与高级语言的直觉恰好相反。",
     type: "single"
   },
   {
@@ -168,8 +168,8 @@ export const QUIZZES: Quiz[] = [
       { text: "30", isCorrect: false },
       { text: "8", isCorrect: false },
     ],
-    feedbackCorrect: "正确！逐条追踪：(1) i=3；(2) edx=i*4=12（leal地址运算）；(3) eax=&a[0]；(4) eax=&a[0]+12=&a[3]；(5) eax=a[3]=8；(6) leal (%eax,%eax,2),%eax = eax+eax×2 = 8+16=24。leal虽是"加载有效地址"指令，但常用它做快速乘法——本题利用S=2的scale factor算3倍。",
-    feedbackWrong: "不对。分步追踪寄存器值：(1) movl $3→i=3；(2) eax=3；(3) leal 0(,%eax,4)→edx=3×4=12；(4) leal -20(%ebp)→eax=&a[0]；(5) addl→eax=&a[3]；(6) movl (%eax)→eax=a[3]=8；(7) leal (%eax,%eax,2)→eax=8+8×2=24。注意leal是地址计算指令，不访问内存，它把"基址+变址×scale+偏移"的结果存入目标寄存器。常见的错误是把a[3]误读为6（索引从1起算），或leal的2倍误作+2（S=2表示乘2）。",
+    feedbackCorrect: "正确！逐条追踪：(1) i=3；(2) edx=i*4=12（leal地址运算）；(3) eax=&a[0]；(4) eax=&a[0]+12=&a[3]；(5) eax=a[3]=8；(6) leal (%eax,%eax,2),%eax = eax+eax×2 = 8+16=24。leal虽是「加载有效地址「指令，但常用它做快速乘法——本题利用S=2的scale factor算3倍。",
+    feedbackWrong: "不对。分步追踪寄存器值：(1) movl $3→i=3；(2) eax=3；(3) leal 0(,%eax,4)→edx=3×4=12；(4) leal -20(%ebp)→eax=&a[0]；(5) addl→eax=&a[3]；(6) movl (%eax)→eax=a[3]=8；(7) leal (%eax,%eax,2)→eax=8+8×2=24。注意leal是地址计算指令，不访问内存，它把「基址+变址×scale+偏移「的结果存入目标寄存器。常见的错误是把a[3]误读为6（索引从1起算），或leal的2倍误作+2（S=2表示乘2）。",
     type: "single"
   },
 
@@ -349,7 +349,7 @@ export const QUIZZES: Quiz[] = [
       { text: "全局金丝雀值在编译时确定且所有函数共享同一值，永不改变", isCorrect: false },
     ],
     feedbackCorrect: "正确！金丝雀（canary）是函数入口处压入栈的随机值（位于saved %ebp之前），在函数返回前与全局副本比对——若缓冲区溢出覆盖了返回地址则必先踩过金丝雀，比对失败立即abort。正确防御：金丝雀检测溢出+NX禁止栈执行+ASLR随机化地址，三者构成纵深防御。",
-    feedbackWrong: "不对。(1) NX（No-eXecute）位的含义是"不可执行"——它标记栈页为不可执行，阻止注入的shellcode运行，而非"设为可执行"。这是最关键的防御之一。(2) ASLR（地址空间布局随机化）恰好相反——每次运行程序时栈、堆、共享库的基址随机变化，使攻击者无法硬编码目标地址。(3) 金丝雀值通常在进程启动时随机生成，且即使在同一进程内，编译器也可能为不同函数使用不同金丝雀值或与额外数据混合（如金丝雀异或返回地址），而非固定值。",
+    feedbackWrong: "不对。(1) NX（No-eXecute）位的含义是「不可执行「——它标记栈页为不可执行，阻止注入的shellcode运行，而非「设为可执行「。这是最关键的防御之一。(2) ASLR（地址空间布局随机化）恰好相反——每次运行程序时栈、堆、共享库的基址随机变化，使攻击者无法硬编码目标地址。(3) 金丝雀值通常在进程启动时随机生成，且即使在同一进程内，编译器也可能为不同函数使用不同金丝雀值或与额外数据混合（如金丝雀异或返回地址），而非固定值。",
     type: "single"
   },
 ];
