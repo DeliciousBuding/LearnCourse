@@ -120,4 +120,21 @@ export interface ReviewConfig {
   examQuestions: ExamQuestion[];
   checklist: ChecklistItem[];
   moduleLoader: (moduleId: string) => Promise<ModuleContent>;
+  /** Enable AI-style review helper sections (KnowledgeMainline, ReviewPriority, ReviewRounds, ExamIndex) */
+  hasReviewSections?: boolean;
+  reviewData?: {
+    priorities: PriorityModule[];
+    rounds: ReviewRound[];
+    examEntries: ExamIndexEntry[];
+    coursewareRows: string[][];
+  };
+  examOverview?: {
+    tipText?: string;
+    scoreHeaders?: string[];
+    scoreRows?: string[][];
+    strategyHeaders?: string[];
+    strategyRows?: string[][];
+  };
+  /** Module ID → PDF filename for slide panel */
+  slidePdfs?: Record<string, string>;
 }

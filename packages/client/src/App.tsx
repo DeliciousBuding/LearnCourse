@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { ReviewConfig } from '@learncourse/framework/types';
 import { useTheme, useLocalStorage, useTextSelectionQuote } from '@learncourse/framework';
 import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
-import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage } from '@learncourse/framework';
+import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from '@learncourse/framework';
 import { COURSES, DEFAULT_COURSE } from './courses/index';
 
 export default function App() {
@@ -35,7 +35,6 @@ export default function App() {
     setLoading(false);
   }, [courseSlug]);
 
-  // All hooks must be before any conditional return
   const modulesStudied = Object.values(studied).filter(Boolean).length;
   const toggleStudied = useCallback((moduleId: string) => (v: boolean) => {
     setStudied(prev => ({ ...prev, [moduleId]: v }));
@@ -43,13 +42,10 @@ export default function App() {
   const hasRightPanel = !!(slidePanel || chatOpen);
   const rightOffset = chatOpen ? 420 : panelWidth;
 
-  if (!courseSlug) {
-    return <LandingPage courses={COURSES} onSelectCourse={selectCourse} />;
-  }
+  if (!courseSlug) return <LandingPage courses={COURSES} onSelectCourse={selectCourse} />;
+  if (loading || !config) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)' }}>加载课程...</div>;
 
-  if (loading || !config) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)' }}>加载课程...</div>;
-  }
+  const { reviewData, examOverview, slidePdfs, hasReviewSections } = config;
 
   return (
     <>
@@ -59,21 +55,34 @@ export default function App() {
         totalModules={config.modules.length} totalChecklist={config.checklist.length}
         onChatToggle={() => setChatOpen(!chatOpen)}
         title={config.title} subtitle={config.subtitle}
-        courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse}
-      />
+        courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
       <Sidebar groups={config.navGroups} courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
       <div id="app-layout">
         <main id="app-main" style={hasRightPanel ? { marginRight: rightOffset } : undefined}>
           <div id="app-main-inner">
             <Toolbar onExpandAll={() => setExpandAll(true)} onCollapseAll={() => setExpandAll(false)} />
             <ExamOverview modulesStudied={modulesStudied} checklistDone={checklistDone}
-              totalModules={config.modules.length} totalChecklist={config.checklist.length} />
+              totalModules={config.modules.length} totalChecklist={config.checklist.length}
+              tipText={examOverview?.tipText}
+              scoreHeaders={examOverview?.scoreHeaders}
+              scoreRows={examOverview?.scoreRows}
+              strategyHeaders={examOverview?.strategyHeaders}
+              strategyRows={examOverview?.strategyRows} />
+            {hasReviewSections && <KnowledgeMainline />}
+            {hasReviewSections && reviewData && (
+              <>
+                <ReviewPriority priorities={reviewData.priorities} />
+                <ReviewRounds rounds={reviewData.rounds} />
+                <ExamIndex examEntries={reviewData.examEntries} coursewareRows={reviewData.coursewareRows} />
+              </>
+            )}
             {config.modules.map(meta => (
               <ModuleSection key={meta.id} meta={meta}
                 quizzes={config.quizzes.filter(q => q.moduleId === meta.id)}
                 examQuestions={config.examQuestions.filter(eq => eq.moduleId === meta.id)}
                 expandAll={expandAll}
                 onStudiedToggle={toggleStudied(meta.id)}
+                onOpenSlide={(page) => setSlidePanel({ moduleId: meta.id, courseware: meta.courseware, page })}
                 loadModule={config.moduleLoader} />
             ))}
             <section id="s-checklist"><h2>考前自检清单</h2>
@@ -86,7 +95,7 @@ export default function App() {
       </div>
       <ScrollTop />
       {slidePanel && <SlidePanel moduleId={slidePanel.moduleId} courseware={slidePanel.courseware}
-        page={slidePanel.page} onClose={() => setSlidePanel(null)} />}
+        page={slidePanel.page} pdfFile={slidePdfs?.[slidePanel.moduleId]} onClose={() => setSlidePanel(null)} />}
       {chatOpen && <ChatPanel onClose={() => setChatOpen(false)} />}
     </>
   );
