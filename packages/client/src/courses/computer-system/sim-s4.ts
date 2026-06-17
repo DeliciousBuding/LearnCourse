@@ -1,0 +1,32 @@
+import type { ExamQuestion } from '@learncourse/framework/types';
+
+// ── 模拟题 ──
+export const S4_SIM_QUESTIONS: ExamQuestion[] = [
+  {
+    id: "sim-s4-1",
+    moduleId: "s4",
+    year: "模拟题",
+    position: "自编",
+    points: 10,
+    questionText: "<p>给出以下C函数及其编译后的AT&T汇编代码（未优化）：</p><pre><code>/* C代码 */\nint sum(int a, int b) {\n    int result;\n    result = a + b;\n    return result;\n}</code></pre><pre><code>/* AT&T汇编 */\nsum:\n    pushl %ebp\n    movl %esp, %ebp\n    subl $4, %esp\n    movl 8(%ebp), %eax\n    addl 12(%ebp), %eax\n    movl %eax, -4(%ebp)\n    movl -4(%ebp), %eax\n    leave\n    ret</code></pre><p>请回答以下问题：</p><ol><li>画出进入函数后的栈帧结构图，标注%ebp位置、返回地址、参数a、参数b、局部变量result相对于%ebp的位置。（4分）</li><li>解释指令 <code>subl $4, %esp</code> 的作用。（2分）</li><li>解释 <code>leave</code> 指令等效的两条指令及其各自作用。（2分）</li><li>指出编译器存在的冗余优化空间，写出优化后的汇编代码。（2分）</li></ol>",
+    answerHtml: "<p><strong>参考答案（10分）：</strong></p>\n<p><strong>(1) 栈帧结构图（4分）：</strong></p>\n<pre><code>        高地址\n    +-------------------+\n    |  参数b (b)        |  ← %ebp+12\n    +-------------------+\n    |  参数a (a)        |  ← %ebp+8\n    +-------------------+\n    |  返回地址          |  ← %ebp+4\n    +-------------------+\n    |  旧%ebp值         |  ← %ebp（当前帧基址指向此处）\n    +-------------------+\n    |  result局部变量    |  ← %ebp-4\n    +-------------------+  ← %esp（subl $4后的栈顶）\n        低地址</code></pre>\n<p>说明：call指令先将返回地址压栈，随后pushl %ebp将调用者的%ebp压栈，movl %esp,%ebp建立新栈帧。C调用约定规定参数从右向左压栈，故参数b在高地址（%ebp+12），参数a紧随其后（%ebp+8），返回地址位于%ebp+4处。</p>\n<p><strong>(2) subl $4, %esp（2分）：</strong></p>\n<p>为局部变量result在栈上分配4字节存储空间。IA-32栈向低地址方向增长，因此从%esp中减去4来「扩展」栈帧。该指令执行后%esp指向新分配空间的最低地址处（即%ebp-4），此4字节用于存储result的值。</p>\n<p><strong>(3) leave指令（2分）：</strong></p>\n<p>leave等价于两条指令：① <code>movl %ebp, %esp</code>——将栈指针%esp恢复到帧基址%ebp的值，即释放subl $4,%esp分配的局部变量空间，%esp重新指向旧%ebp值所在位置；② <code>popl %ebp</code>——从栈顶弹出4字节到%ebp寄存器，恢复调用者函数的帧基址。执行后%esp指向返回地址，为ret做准备。</p>\n<p><strong>(4) 冗余优化（2分）：</strong></p>\n<p>编译器生成了冗余访存：%eax已保存a+b的计算结果，却先写入栈（movl %eax, -4(%ebp)）再立刻读回（movl -4(%ebp), %eax），中间%eax未被修改，两次访存完全多余。优化后代码：</p>\n<pre><code>sum:\n    pushl %ebp\n    movl %esp, %ebp\n    movl 8(%ebp), %eax\n    addl 12(%ebp), %eax\n    leave\n    ret</code></pre>\n<p>若进一步利用leaf函数特性（不调用其他函数，无需栈帧），可省略%ebp的保存/恢复，直接用%esp寻址参数：</p>\n<pre><code>sum:\n    movl 4(%esp), %eax\n    addl 8(%esp), %eax\n    ret</code></pre>"
+  },
+  {
+    id: "sim-s4-2",
+    moduleId: "s4",
+    year: "模拟题",
+    position: "自编",
+    points: 10,
+    questionText: "<p>已知寄存器和栈的初始状态如下：</p><ul><li>%eax = 0x00000100</li><li>%ebx = 0x00000010</li><li>%ecx = 0x00000004</li><li>%esp = 0x1000（栈指针）</li><li>其余通用寄存器初始值未知（按需确定）</li></ul><p>请<strong>逐条</strong>执行以下AT&T汇编指令序列，写出每条指令执行后受影响的寄存器或内存的值，并给出最终所有相关寄存器和%esp的值。</p><pre><code>(1) movl %eax, %edx\n(2) leal (%eax, %ebx, 4), %esi\n(3) addl %ecx, %esi\n(4) movl $0x200, %edi\n(5) subl %esi, %edi\n(6) pushl %edi\n(7) pushl %esi\n(8) popl %eax\n(9) popl %ebx</code></pre><p><strong>评分标准：</strong>leal地址计算3分，算术指令追踪3分，push/pop栈操作与LIFO顺序4分。</p>",
+    answerHtml: "<p><strong>参考答案（10分）：</strong></p>\n<p><strong>逐条追踪：</strong></p>\n<p>(1) <code>movl %eax, %edx</code> → %edx = 0x00000100（将%eax的值复制到%edx）（1分）</p>\n<p>(2) <code>leal (%eax, %ebx, 4), %esi</code> → %esi = %eax + %ebx × 4 = 0x100 + 0x10 × 4 = 0x100 + 0x40 = <strong>0x00000140</strong>（2分）<br/>关键：leal只计算有效地址（基址+索引×比例），<strong>不访问内存</strong>。比例因子4常用于int数组（sizeof(int)=4）的地址计算。</p>\n<p>(3) <code>addl %ecx, %esi</code> → %esi = %esi + %ecx = 0x140 + 0x004 = <strong>0x00000144</strong>（1分）</p>\n<p>(4) <code>movl $0x200, %edi</code> → %edi = 0x00000200（1分）</p>\n<p>(5) <code>subl %esi, %edi</code> → %edi = %edi - %esi = 0x200 - 0x144 = <strong>0x000000BC</strong>（1分）<br/>验算：0x200=512, 0x144=324, 512-324=188=0xBC。</p>\n<p>(6) <code>pushl %edi</code> → %esp = 0x1000 - 4 = 0x0FFC，内存M[0x0FFC] = 0x000000BC（1分）<br/>push操作：先将%esp减4，再将操作数值写入新栈顶。</p>\n<p>(7) <code>pushl %esi</code> → %esp = 0x0FFC - 4 = 0x0FF8，内存M[0x0FF8] = 0x00000144（1分）</p>\n<p>(8) <code>popl %eax</code> → %eax = M[0x0FF8] = 0x00000144，%esp = 0x0FF8 + 4 = 0x0FFC（1分）<br/>pop操作：先从栈顶读取4字节到目的寄存器，再将%esp加4。</p>\n<p>(9) <code>popl %ebx</code> → %ebx = M[0x0FFC] = 0x000000BC，%esp = 0x0FFC + 4 = 0x1000（1分）</p>\n<p><strong>最终寄存器值汇总：</strong></p>\n<pre><code>%eax = 0x00000144\n%ebx = 0x000000BC\n%ecx = 0x00000004\n%edx = 0x00000100\n%esi = 0x00000144\n%edi = 0x000000BC\n%esp = 0x1000（栈完全平衡，恢复初始值）</code></pre>\n<p><strong>关键考点——LIFO顺序：</strong>push/pop遵循后进先出（LIFO）原则。(7)最后压入的是%esi的值0x144，(6)先压入的是%edi的值0xBC。因此(8)popl %eax获取的是<strong>最后压入</strong>的%esi值（0x144），而非先压入的%edi值（0xBC）；(9)popl %ebx才获取0xBC。若混淆次序，会导致%eax与%ebx的结果互换。</p>"
+  },
+  {
+    id: "sim-s4-3",
+    moduleId: "s4",
+    year: "模拟题",
+    position: "自编",
+    points: 8,
+    questionText: "<p>简述AT&T汇编中 <code>leal</code> 指令与 <code>movl</code> 指令在处理「内存形式操作数」（如 <code>(%eax)</code>）时的<strong>本质区别</strong>，并给出 <code>leal</code> 指令的<strong>两种典型应用场景</strong>（需附代码示例和简要说明）。</p>",
+    answerHtml: "<p><strong>参考答案（8分）：</strong></p>\n<p><strong>一、核心区别（4分）：</strong></p>\n<p><code>leal</code>（Load Effective Address）是「地址计算」指令：它计算源操作数所描述的内存地址值，并将该<strong>地址本身</strong>（一个32位整数值）加载到目的寄存器中。<strong>leal不访问内存</strong>——既不读取也不写入内存数据，仅在CPU内部完成地址算术运算。例如 <code>leal (%eax), %ebx</code> 等价于 <code>movl %eax, %ebx</code>（将%eax的值作为地址赋给%ebx，而非读取该地址处的内容）。</p>\n<p><code>movl</code>（Move Long）是「数据传送」指令：当源操作数为内存寻址模式时，<code>movl</code> 会<strong>真正访问内存</strong>，读取该地址处存储的4字节数据值并复制到目的寄存器。例如 <code>movl (%eax), %ebx</code> 读取内存地址%eax处的32位数据存入%ebx，这是一次真实的内存读操作。</p>\n<p><strong>本质对比：</strong>面对同一个内存操作数 <code>(%eax)</code>，<code>leal (%eax), %ebx</code> 得到的是%eax的值（即地址）；<code>movl (%eax), %ebx</code> 得到的是M[%eax]的值（即内存中的数据）。前者不产生总线事务，后者产生。</p>\n<p><strong>二、典型应用场景（4分，各2分）：</strong></p>\n<p><strong>场景1——数组元素地址计算：</strong>在循环中快速计算数组元素的运行时地址，替代多条移位和加法指令。</p>\n<pre><code># 已知 %eax = 数组基址, %ebx = 数组索引i\n# 计算 &amp;array[i] 存入 %ecx（假设元素为4字节int）\nleal (%eax, %ebx, 4), %ecx\n# %ecx = %eax + %ebx × 4，一条指令完成 base + index×scale\n# 若不使用leal，需：movl %ebx,%ecx; shll $2,%ecx; addl %eax,%ecx</code></pre>\n<p><strong>场景2——轻量算术运算：</strong>利用地址计算单元做快速常数乘法/加法，不占用ALU且不修改标志位（EFLAGS），适合在关键路径上穿插算术。</p>\n<pre><code># 例：%eax = %eax × 5 + 8（5=1+4，用基址+索引×比例4）\nleal 8(%eax, %eax, 4), %eax\n# %eax = %eax + %eax × 4 + 8 = %eax × 5 + 8\n\n# 例：%eax = %eax × 3\nleal (%eax, %eax, 2), %eax\n# %eax = %eax + %eax × 2 = %eax × 3\n\n# 注意：比例因子仅支持1、2、4、8（2的幂），不能直接做×5+?之外的非2的幂组合（×9可用比例因子8：leal (%eax,%eax,8),%eax）</code></pre>"
+  },
+];

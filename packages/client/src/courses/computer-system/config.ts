@@ -1,6 +1,8 @@
 import type { ReviewConfig } from '@learncourse/framework/types';
 import { QUIZZES } from './quizzes';
+import { ALL_NEW_QUIZZES } from './quizzesNew';
 import { EXAM_QUESTIONS } from './examQuestions';
+import { ALL_NEW_SIM_QUESTIONS } from './simNew';
 import { CHECKLIST } from './checklist';
 import { CS_EXAM_TIP, CS_SCORE_HEADERS, CS_SCORE_ROWS, CS_STRATEGY_HEADERS, CS_STRATEGY_ROWS, CS_SLIDE_PDFS, CS_EXAM_ENTRIES, CS_COURSEWARE_ROWS, CS_PRIORITIES, CS_ROUNDS } from './reviewData';
 
@@ -63,8 +65,8 @@ export const csConfig: ReviewConfig = {
     { id: 's12', number: 12, title: '安全攻击与防御', icon: 'Shield', courseware: '12 安全+64位.pptx', examRefs: '概念题 ~3分' },
   ],
 
-  quizzes: QUIZZES,
-  examQuestions: EXAM_QUESTIONS,
+  quizzes: [...QUIZZES, ...ALL_NEW_QUIZZES],
+  examQuestions: [...EXAM_QUESTIONS, ...ALL_NEW_SIM_QUESTIONS],
   checklist: CHECKLIST,
   hasReviewSections: true,
   reviewData: { priorities: CS_PRIORITIES, rounds: CS_ROUNDS, examEntries: CS_EXAM_ENTRIES, coursewareRows: CS_COURSEWARE_ROWS },

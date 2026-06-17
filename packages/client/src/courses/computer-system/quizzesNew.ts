@@ -9,6 +9,7 @@ import { S8_QUIZZES } from './quizzes-s8';
 import { S9_QUIZZES } from './quizzes-s9';
 import { S10_QUIZZES } from './quizzes-s10';
 import { S11_QUIZZES } from './quizzes-s11';
+import { S12_QUIZZES } from './quizzes-s12';
 
 export const ALL_NEW_QUIZZES: Quiz[] = [
   ...S1_QUIZZES,
@@ -21,5 +22,6 @@ export const ALL_NEW_QUIZZES: Quiz[] = [
   ...S8_QUIZZES,
   ...S9_QUIZZES,
   ...S10_QUIZZES,
-  ...S11_QUIZZES
+  ...S11_QUIZZES,
+  ...S12_QUIZZES
 ];
