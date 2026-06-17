@@ -8,6 +8,7 @@ import { QuizBlock } from './QuizBlock';
 import { ExamQuestion as ExamQuestionCard } from './ExamQuestion';
 import { ProseBlock } from './ProseBlock';
 import { CodeBlock } from './CodeBlock';
+import { Figure } from './Figure';
 import { SlideRef } from './SlideRef';
 import { StudiedToggle } from './StudiedToggle';
 
@@ -116,6 +117,24 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
                     return <ComparisonTable key={bi} headers={block.headers} rows={block.rows} />;
                   case 'code':
                     return <CodeBlock key={bi} language={block.language} code={block.code} />;
+                  case 'image':
+                    return <Figure key={bi} src={block.src} alt={block.alt} caption={block.caption} />;
+                  case 'video':
+                    return (
+                      <div key={bi} style={{ margin: '0.85rem 0' }}>
+                        <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: 10, overflow: 'hidden' }}>
+                          <iframe
+                            src={block.platform === 'youtube'
+                              ? `https://www.youtube.com/embed/${block.id}`
+                              : `https://player.bilibili.com/player.html?bvid=${block.id}`}
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                            allowFullScreen
+                            title={block.caption || 'Video'}
+                          />
+                        </div>
+                        {block.caption && <p style={{ marginTop: '0.4rem', fontSize: '0.85rem', color: 'var(--color-text-secondary)', textAlign: 'center' }}>{block.caption}</p>}
+                      </div>
+                    );
                   case 'details':
                     return <DetailBlock key={bi} summary={block.summary} open={expandAll}><ProseBlock html={block.body} /></DetailBlock>;
                   case 'mermaid':

@@ -200,3 +200,37 @@ tr:hover td { background:var(--color-code-bg); }
 .dark .hljs-type { color: #ffa657; }
 .dark .hljs-meta { color: #d2a8ff; }
 .dark .hljs-title { color: #d2a8ff; }
+
+/* ── Animation tokens ── */
+:root {
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Missing keyframe fix ── */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+/* ── Accessibility ── */
+*:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print mode ── */
+@media print {
+  #app-sidebar, #app-header, #scroll-top, #reading-progress,
+  [id^="chat-"], [class*="chat"] { display: none !important; }
+  #app-main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; }
+  #app-main-inner { max-width: 100% !important; }
+  details { display: block !important; }
+  pre, table, .mermaid, svg { page-break-inside: avoid; max-width: 100% !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h2 { border-bottom-color: #ccc !important; }
+}

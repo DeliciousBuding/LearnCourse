@@ -24,6 +24,8 @@ export type ContentBlock =
   | { type: 'details'; summary: string; body: string }
   | { type: 'mermaid'; id: string; chart: string }
   | { type: 'math'; formula: string; display: boolean }
+  | { type: 'image'; src: string; alt: string; caption?: string }
+  | { type: 'video'; platform: 'youtube' | 'bilibili'; id: string; caption?: string }
   | { type: 'examQuestions'; ids: string[] }
   | { type: 'quiz'; ids: string[] };
 
