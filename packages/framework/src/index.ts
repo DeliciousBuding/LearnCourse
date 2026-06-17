@@ -8,6 +8,7 @@ export { useScrollSpy } from './hooks/useScrollSpy';
 export { useTheme } from './hooks/useTheme';
 export { ToastProvider, useToast } from './hooks/useToast';
 export { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+export { useI18n } from './hooks/useI18n';
 export { useTextSelectionQuote } from './hooks/useTextSelectionQuote';
 
 // Layout components
