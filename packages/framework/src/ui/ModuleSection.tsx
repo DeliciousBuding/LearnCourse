@@ -28,6 +28,7 @@ interface ModuleSectionProps {
 
 export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false, onStudiedToggle, onOpenSlide, loadModule }: ModuleSectionProps) {
   const [module, setModule] = useState<ModuleContent | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -46,9 +47,13 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
   useEffect(() => {
     if (!visible || module) return;
     let cancelled = false;
-    loadModule(meta.id).then(mod => { if (!cancelled) setModule(mod); }).catch(() => {});
+    loadModule(meta.id).then(mod => { if (!cancelled) { setModule(mod); setError(null); } }).catch(err => {
+      if (!cancelled) setError(err instanceof Error ? err.message : '加载失败');
+    });
     return () => { cancelled = true; };
   }, [visible, module, meta.id, loadModule]);
+
+  const retry = () => { setModule(null); setError(null); };
 
   const quizMap = new Map(quizzes.map(q => [q.id, q]));
   const examMap = new Map(examQuestions.map(eq => [eq.id, eq]));
@@ -68,7 +73,12 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
     <section id={meta.id}>
       <h2>{meta.title}<StudiedToggle moduleId={meta.id} onToggle={onStudiedToggle} /></h2>
 
-      {!module ? (
+      {error ? (
+        <div style={{ padding: '0.75rem 1rem', marginBottom: '1rem', background: 'var(--color-danger-soft)', borderRadius: 8, fontSize: '0.85rem', color: 'var(--color-danger)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span>模块加载失败{error ? `: ${error}` : ''}</span>
+          <button onClick={retry} style={{ cursor: 'pointer', padding: '0.25rem 0.75rem', borderRadius: 6, border: '1px solid var(--color-danger)', background: 'transparent', color: 'var(--color-danger)', fontSize: '0.8rem' }}>重试</button>
+        </div>
+      ) : !module ? (
         <div style={{ padding: '2rem 0', color: 'var(--color-text-tertiary)', fontSize: '0.85rem' }}>加载中...</div>
       ) : (
         <>

@@ -1,4 +1,6 @@
+import { useRef, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useToast } from '../hooks/useToast';
 import type { Quiz } from '../types';
 import katex from 'katex';
 
@@ -18,6 +20,7 @@ function renderMath(text: string): string {
 }
 
 export function QuizBlock({ quiz }: { quiz: Quiz }) {
+  const { toast } = useToast();
   const [answers, setAnswers] = useLocalStorage<QuizAnswers>('ai-quiz-answers', {});
   const saved = answers[quiz.id];
   const done = saved !== undefined;
@@ -25,7 +28,40 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
   const correctIdx = quiz.options.findIndex(o => o.isCorrect);
   const isCorrect = selectedIdx === correctIdx;
 
-  const select = (idx: number) => { if (!done) setAnswers(p => ({ ...p, [quiz.id]: idx })); };
+  const undoRef = useRef<{ timer: ReturnType<typeof setTimeout> | null; active: boolean }>({ timer: null, active: false });
+  const [undoVisible, setUndoVisible] = useLocalStorage<Record<string, boolean>>('ai-quiz-undo', {});
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (undoRef.current.timer) clearTimeout(undoRef.current.timer);
+    };
+  }, []);
+
+  const select = (idx: number) => {
+    if (done && !undoVisible[quiz.id]) return;
+    setAnswers(p => ({ ...p, [quiz.id]: idx }));
+    setUndoVisible(p => ({ ...p, [quiz.id]: true }));
+    const correct = idx === correctIdx;
+    toast(correct ? 'success' : 'error', correct ? '答案已保存' : '答案错误');
+
+    // Start 3s undo timer
+    if (undoRef.current.timer) clearTimeout(undoRef.current.timer);
+    undoRef.current.active = true;
+    undoRef.current.timer = setTimeout(() => {
+      setUndoVisible(p => ({ ...p, [quiz.id]: false }));
+      undoRef.current.active = false;
+    }, 3000);
+  };
+
+  const undo = () => {
+    if (undoRef.current.timer) clearTimeout(undoRef.current.timer);
+    undoRef.current.active = false;
+    const next = { ...answers };
+    delete next[quiz.id];
+    setAnswers(next);
+    setUndoVisible(p => ({ ...p, [quiz.id]: false }));
+  };
 
   return (
     <div style={{
@@ -60,7 +96,7 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
             else if (idx === selectedIdx) { bg = 'var(--color-danger-soft)'; border = '1px solid var(--color-danger)'; color = 'var(--color-danger)'; }
           }
           return (
-            <button key={idx} onClick={() => select(idx)} disabled={done} style={{
+            <button key={idx} onClick={() => select(idx)} disabled={done && !undoVisible[quiz.id]} style={{
               display: 'flex', alignItems: 'flex-start', gap: '0.6rem', width: '100%',
               padding: '0.55rem 0.85rem', borderRadius: 8, fontSize: '0.88rem', lineHeight: 1.5,
               textAlign: 'left', cursor: done ? 'default' : 'pointer',
@@ -80,6 +116,18 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
           );
         })}
       </div>
+
+      {/* Undo */}
+      {done && undoVisible[quiz.id] && (
+        <div style={{ padding: '0 1.15rem 0.7rem' }}>
+          <span onClick={undo} style={{
+            color: 'var(--color-text-tertiary)', fontSize: '0.75rem',
+            cursor: 'pointer', marginTop: 4, display: 'inline-block',
+          }}>
+            撤销 (3s)
+          </span>
+        </div>
+      )}
 
       {/* Feedback */}
       {done && (

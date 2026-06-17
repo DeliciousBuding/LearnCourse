@@ -1,9 +1,23 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { ReviewConfig } from 'learncourse/types';
-import { useTheme, useLocalStorage, useTextSelectionQuote } from 'learncourse';
-import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from 'learncourse';
-import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from 'learncourse';
+import { Component, useState, useCallback, useEffect, type ReactNode } from 'react';
+import type { ReviewConfig } from '@learncourse/framework/types';
+import { useTheme, useLocalStorage, useTextSelectionQuote, ToastProvider } from '@learncourse/framework';
+import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel } from '@learncourse/framework';
+import { ModuleSection, ExamOverview, Checklist, Toolbar, LandingPage, ReviewPriority, ReviewRounds, ExamIndex, KnowledgeMainline } from '@learncourse/framework';
 import { COURSES, DEFAULT_COURSE } from './courses/index';
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)', fontSize: '1rem' }}>渲染出错，请刷新页面</div>;
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
   const [courseSlug, setCourseSlug] = useState<string | null>(() =>
@@ -48,6 +62,8 @@ export default function App() {
   const { reviewData, examOverview, slidePdfs, hasReviewSections } = config;
 
   return (
+    <ErrorBoundary>
+    <ToastProvider>
     <>
       <ReadingProgress />
       <Header effective={effective} onThemeToggle={toggleTheme}
@@ -98,5 +114,7 @@ export default function App() {
         page={slidePanel.page} pdfFile={slidePdfs?.[slidePanel.moduleId]} onClose={() => setSlidePanel(null)} />}
       {chatOpen && <ChatPanel onClose={() => setChatOpen(false)} />}
     </>
+    </ToastProvider>
+    </ErrorBoundary>
   );
 }
