@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { X, GripVertical, Loader2 } from 'lucide-react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useI18n } from '../hooks/useI18n';
 
 interface SlidePanelProps {
   moduleId: string;
@@ -11,6 +12,7 @@ interface SlidePanelProps {
 }
 
 export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: SlidePanelProps) {
+  const { t } = useI18n();
   const [width, setWidth] = useLocalStorage('slide-panel-width', 480);
   const [loading, setLoading] = useState(true);
   const [closing, setClosing] = useState(false);
@@ -94,7 +96,7 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
         {loading && (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--color-text-tertiary)', fontSize: '0.8rem' }}>
             <Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} />
-            课件加载中...
+            {t('slide.loading')}
           </div>
         )}
         {resolvedPdfFile ? (
@@ -103,7 +105,7 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
             onLoad={() => setLoading(false)} title={courseware} />
         ) : (
           <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-tertiary)', fontSize: '0.85rem' }}>
-            该章节暂无课件
+            {t('slide.noSlides')}
           </div>
         )}
       </div>
