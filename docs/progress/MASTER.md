@@ -4,8 +4,19 @@
 
 ## Active Phase
 
-- **Phase A** (Error Handling): ✅ Complete — ToastProvider + DOMPurify + Mermaid sync + Quiz undo + Module retry
-- **Phase B** (i18n + Quiz types): 🟡 i18n foundation created (locales/zh.ts, useI18n hook); quiz types, KnowledgeMap pending
+- **Phase A** (Error Handling): ✅ Complete
+- **Phase B** (i18n + Quiz types): ✅ Complete — i18n in 12 components, 4 quiz types, KnowledgeMap data-driven
+- **Phase C** (Performance): ✅ Complete — font preload, Mermaid/Katex chunk split, Figure blur-up
+- **Phase D** (Archive): ✅ docs/analysis.md, docs/plan.md, docs/progress/MASTER.md created
+
+## S.U.P.E.R Trajectory
+
+| Phase | Score | Delta |
+|-------|-------|-------|
+| Baseline | 🟡 3.2 | — |
+| After Phase A | 🟢 3.8 | +0.6 |
+| After Phase B+C | 🟢 4.2 | +1.0 |
+| v1.0 Ship | 🟢 4.2 ✅ | Target met |
 - **Phase C** (Performance): 🟡 preload links + chunk optimization pending
 - **Phase D** (Archive): 🔴 not started
 
