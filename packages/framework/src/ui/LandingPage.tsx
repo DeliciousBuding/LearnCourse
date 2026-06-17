@@ -1,4 +1,4 @@
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 interface CourseEntryLike { slug: string; title: string; }
 
@@ -31,13 +31,17 @@ export function LandingPage({ courses, onSelectCourse }: LandingPageProps) {
         </p>
         <div style={{ marginTop: '2rem', display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="https://github.com/DeliciousBuding/LearnCourse" target="_blank" rel="noopener"
-            style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
-            GitHub →
+            style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500, transition: 'all 120ms ease' }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--color-accent)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--color-border)'}>
+            GitHub
           </a>
           {courses.length > 0 && (
             <button onClick={() => onSelectCourse(courses[0].slug)}
-              style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'var(--color-accent)', color: '#fff', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' }}>
-              进入课程 <ArrowRight size={14} style={{ verticalAlign: 'middle', marginLeft: 4 }} />
+              style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'var(--color-accent)', color: '#fff', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'all 120ms ease', opacity: 1 }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+              进入课程
             </button>
           )}
         </div>
