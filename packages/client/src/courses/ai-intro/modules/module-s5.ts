@@ -1,0 +1,243 @@
+import type { ModuleContent } from "learncourse/types";
+
+const meta = {"id":"s5","number":5,"title":"约束满足问题 CSP","icon":"Grid3x3","courseware":"07 约束满足问题.pptx","examRefs":"2025 期中一(3), 2025 期末一(4)(5), 2025 期末二(1)"};
+
+const content: ModuleContent = {
+  meta,
+  calloutText: "这章解决什么问题？排课表——每门课要老师、教室、时间，每个人有不同要求，怎么同时满足所有限制？这不是\"从 A 走到 B\"的搜索题，而是\"给每个人分配一个值，让所有限定条件同时成立\"的填值问题。",
+  sections: [
+  {
+    "id": "s5-s2",
+    "title": "5.1 先理解直觉",
+    "content": [
+      {
+        "type": "prose",
+        "html": "<p>想一想排一张大学课表的难度：CS-5211 要安排，CS-5212 要安排，AI 要安排。每门课可以放在\"周一上午、周一下午、周二上午\"。但约束来了——同一个老师不能同时上两门课，同一个教室不能同一时间排两门课，某些课有先后依赖。</p>"
+      },
+      {
+        "type": "prose",
+        "html": "<p><strong>这就是 CSP 的核心。</strong>它不是\"找到一条从起点到终点的路径\"，而是\"给每个变量找一个值，让所有约束同时被满足\"。</p>"
+      },
+      {
+        "type": "prose",
+        "html": "<p>和普通搜索的本质区别：普通搜索关心\"当前状态 → 下一个状态是什么\"；CSP 关心\"哪些变量还没赋值 → 每个变量还能取哪些值 → 当前赋值有没有冲突\"。一个是<strong>走路问题</strong>，一个是<strong>填表问题</strong>。</p>"
+      }
+    ]
+  },
+  {
+    "id": "s5-s3",
+    "title": "5.2 核心概念",
+    "content": [
+      {
+        "type": "table",
+        "headers": [],
+        "rows": [
+          [
+            "成分",
+            "含义",
+            "地图着色例子",
+            "排课例子"
+          ],
+          [
+            "变量 Variables",
+            "需要被决定的\"东西\"",
+            "WA, NT, SA, Q, NSW, V, T（7个地区）",
+            "课程 A、课程 B、课程 C"
+          ],
+          [
+            "值域 Domains",
+            "每个变量可以取的值",
+            "{Red, Green, Blue}",
+            "{周一上午, 周一下午, 周二上午}"
+          ],
+          [
+            "约束 Constraints",
+            "不允许的值组合",
+            "相邻区域不能同色",
+            "A 和 B 不能同时；B 和 C 不能同时"
+          ]
+        ]
+      },
+      {
+        "type": "prose",
+        "html": "<p><strong>关键术语：</strong></p>"
+      },
+      {
+        "type": "prose",
+        "html": "<ul>\n<li><strong>完整赋值：</strong>所有变量都已赋值</li>\n<li><strong>部分赋值：</strong>只给部分变量赋值</li>\n<li><strong>相容赋值：</strong>当前赋值没有违反任何约束</li>\n</ul>"
+      },
+      {
+        "type": "prose",
+        "html": "<p>CSP 求解的实质：从\"相容的部分赋值\"不断扩展，直到得到\"完整赋值\"。</p>"
+      }
+    ]
+  },
+  {
+    "id": "s5-s4",
+    "title": "5.3 动手试试——地图着色 + 回溯搜索",
+    "content": [
+      {
+        "type": "prose",
+        "html": "<p>澳大利亚地图着色：WA、NT、SA、Q、NSW、V、T 七个地区，三种颜色 Red/Green/Blue，相邻不同色。用回溯法求解。</p>"
+      },
+      {
+        "type": "code",
+        "language": "",
+        "code": "步骤1: WA = Red        ✓ (第一个变量随便选)\n步骤2: NT = Green       ✓ (NT 与 WA 相邻，不能选 Red，可以选 Green)\n步骤3: SA = ?            SA 与 WA、NT 都相邻\n                         WA=Red, NT=Green → SA 只能用 Blue ✓\n步骤4: Q = Red          ✓ (Q 与 NT(Green)、SA(Blue) 相邻，可以选 Red)\n步骤5: NSW = Green      ✓ (与 SA(Blue)、Q(Red) 相邻)\n步骤6: V = Red          ✓ (与 NSW(Green)、SA(Blue) 相邻)\n步骤7: T = Red          (T 只与 V 相邻——等等，V=Red，T 不能也是 Red！\n                        回溯！试 T = Green ✓)\n\n最终解：WA=Red, NT=Green, SA=Blue, Q=Red, NSW=Green, V=Red, T=Green"
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "text": "回溯的本质：赋值 → 检查是否冲突 → 有冲突就回退换一个值 → 全试过都不行就再往上一层回退。就像填数独，一格填错了后面全错，得回来改。"
+      }
+    ]
+  },
+  {
+    "id": "s5-s5",
+    "title": "5.4 提高回溯效率的五种方法",
+    "content": [
+      {
+        "type": "table",
+        "headers": [],
+        "rows": [
+          [
+            "方法",
+            "全称",
+            "解决什么问题",
+            "直觉例子"
+          ],
+          [
+            "MRV",
+            "Minimum Remaining Values",
+            "选哪个变量先赋值",
+            "收拾行李箱——最难塞的东西先放。谁剩的可选值最少，谁最\"危险\"，先处理它"
+          ],
+          [
+            "Degree heuristic",
+            "度启发式",
+            "MRV 并列时选哪个",
+            "约束别人最多的变量优先——因为它最容易让其他变量出问题，早点暴露"
+          ],
+          [
+            "LCV",
+            "Least Constraining Value",
+            "给变量选哪个值",
+            "选那个对别人限制最少的值——给后面的变量留更多余地"
+          ],
+          [
+            "Forward Checking",
+            "前向检验",
+            "提前删掉不可能的值",
+            "赋 A=Red 后立刻删掉相邻区域值域中的 Red——不等轮到它们才发现冲突"
+          ],
+          [
+            "MAC",
+            "Maintaining Arc Consistency",
+            "更系统地维护一致性",
+            "不仅删除直接冲突的值，还顺着约束链传播——比 Forward Checking 更彻底"
+          ]
+        ]
+      },
+      {
+        "type": "prose",
+        "html": "<p><strong>MRV vs LCV 易混区分：</strong>MRV 是<strong>选变量</strong>的策略（\"谁最紧张我先处理谁\"），LCV 是<strong>选值</strong>的策略（\"选对别人最友好的值\"）。一个管\"先填哪格\"，一个管\"填什么颜色\"。</p>"
+      }
+    ]
+  },
+  {
+    "id": "s5-s6",
+    "title": "5.5 CSP 常见陷阱",
+    "content": [
+      {
+        "type": "callout",
+        "variant": "warning",
+        "text": "约束传播不能替代搜索。弧相容（AC-3）删掉\"明显不可能\"的值之后，很多问题仍然需要搜索才能找到解。不要以为做了弧相容就可以跳过回溯——它只是帮你缩小搜索空间。"
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "弧相容不保证有解。一个 CSP 可能所有变量都满足弧相容（每个变量的每个值都有\"支持者\"），但整体仍然无解——因为弧相容只检查两两变量之间，不检查三个或更多变量间的隐含冲突。"
+      }
+    ]
+  },
+  {
+    "id": "s5-s7",
+    "title": "5.6 考试怎么考",
+    "content": [
+      {
+        "type": "prose",
+        "html": "<h4>题型与分值分布</h4>"
+      },
+      {
+        "type": "table",
+        "headers": [],
+        "rows": [
+          [
+            "题型",
+            "分值",
+            "典型考法",
+            "难度"
+          ],
+          [
+            "选择题/填空",
+            "3-5 分",
+            "问你\"MRV 是什么策略、LCV 是什么策略\"；辨认回溯/前向检验/MAC 的定义",
+            "低"
+          ],
+          [
+            "简答题",
+            "5-8 分",
+            "\"请说明弧相容与路径相容的区别\"；\"为什么弧相容不能替代回溯？\"",
+            "中"
+          ],
+          [
+            "计算/搜索题",
+            "5-10 分",
+            "给定一个小规模 CSP（如 4 变量地图着色），模拟一步回溯或前向检验，写出赋值过程",
+            "中"
+          ]
+        ]
+      },
+      {
+        "type": "prose",
+        "html": "<h4>得分点</h4><ul><li>能明确写出 CSP 三要素：变量 X、值域 D、约束 C</li><li>回溯过程：每一步写明\"赋值 → 检查冲突 → 冲突则换值/回溯\"</li><li>MRV vs LCV vs 度启发式：区分\"选变量\"和\"选值\"，不要混</li><li>前向检验 vs MAC：前向检验只删直接邻居的值域，MAC 沿约束传播更远</li><li>弧相容：能说出\"对每一条弧 $X \\\\to Y$，保证 X 的每个值在 Y 中都有支持\"</li></ul>"
+      },
+      {
+        "type": "prose",
+        "html": "<h4>常见错误</h4><ul><li><strong>把 CSP 当普通搜索：</strong>CSP 的\"状态\"是部分赋值，不是路径上的节点。别用 A* 的套路来解 CSP</li><li><strong>MRV 和 LCV 搞反：</strong>MRV 是\"谁剩的可取值最少就先赋值谁\"（选变量）；LCV 是\"选那个对邻居约束最少的值\"（选值）。一句话记：MRV 选变量、LCV 选值</li><li><strong>以为弧相容能替代搜索：</strong>AC-3 删完不一致值后，很多问题仍需回溯。弧相容是\"预处理\"，不是\"求解器\"</li><li><strong>忘记度启发式只能在 MRV 并列时使用：</strong>度启发式是 MRV 的\"平局决胜\"规则，不是独立使用的</li></ul>"
+      },
+      {
+        "type": "prose",
+        "html": "<h4>答题模板 —— CSP 回溯求解题</h4>"
+      },
+      {
+        "type": "code",
+        "language": "",
+        "code": "步骤1: 写出 CSP 三要素 → X = {变量1, 变量2, ...}, D = {...}, C = {...}\n步骤2: 选择第一个变量（不指定方法就按顺序）→ 赋第一个值\n步骤3: 选下一个变量（如有 MRV，优先剩余值域最小的）→ 在值域中选不冲突的值\n步骤4: 若当前变量所有值都冲突 → 回溯到上一个变量，换一个值\n步骤5: 重复 3-4，直到所有变量赋值完毕\n\n⚠ 每一步必须写出：当前赋值的变量、赋了什么值、与哪些已有赋值冲突（如有）\n⚠ 若题目要求用 MRV/LCV/前向检验，每一步要说明\"为什么选这个变量/值\""
+      }
+    ]
+  },
+  {
+    "id": "s5-s8",
+    "title": "5.7 真题演练",
+    "content": [
+      {
+        "type": "examQuestions",
+        "ids": ["eq-s5-7"]
+      }
+    ]
+  },
+  {
+    "id": "s5-s9",
+    "title": "5.8 小测验",
+    "content": [
+      {
+        "type": "quiz",
+        "ids": ["q-s5-8", "q-s5-9"]
+      }
+    ]
+  }
+],
+};
+
+export default content;
