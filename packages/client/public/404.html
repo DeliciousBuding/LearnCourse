@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><script>
+sessionStorage.redirect = location.pathname + location.search;
+location.replace(new URL(location.pathname + location.search, location.origin).pathname === '/' ? '/' : '/LearnCourse/' + location.search);
+</script></head><body>Redirecting...</body></html>

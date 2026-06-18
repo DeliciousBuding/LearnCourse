@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useId } from 'react';
-import mermaid from 'mermaid'; /* webpackChunkName: "mermaid" */
+import { memo, useEffect, useRef, useState, useId } from 'react';
+import mermaid from 'mermaid';
 
 interface MermaidDiagramProps { id: string; chart: string; }
 
@@ -24,7 +24,7 @@ function reinitialize() {
   init();
 }
 
-export function MermaidDiagram({ id, chart }: MermaidDiagramProps) {
+function MermaidDiagram({ id, chart }: MermaidDiagramProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -68,3 +68,6 @@ export function MermaidDiagram({ id, chart }: MermaidDiagramProps) {
       dangerouslySetInnerHTML={{ __html: svg }} />
   );
 }
+
+const MemoizedMermaidDiagram = memo(MermaidDiagram);
+export { MemoizedMermaidDiagram as MermaidDiagram };

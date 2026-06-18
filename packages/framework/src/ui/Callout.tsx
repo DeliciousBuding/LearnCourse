@@ -1,5 +1,6 @@
 import type { CalloutVariant } from '../types';
 import { Info, Lightbulb, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { fixLatex, renderKatexInHtml } from '../lib/math';
 
 interface CalloutProps { variant: CalloutVariant; children?: React.ReactNode; text?: string; }
 
@@ -21,7 +22,7 @@ export function Callout({ variant, children, text }: CalloutProps) {
     }}>
       <div style={{ display: 'flex', gap: '0.75rem' }}>
         <c.icon size={20} style={{ color: c.border, flexShrink: 0, marginTop: 2 }} />
-        <div style={{ minWidth: 0 }}>{children ?? <span>{text}</span>}</div>
+        <div style={{ minWidth: 0 }}>{children ?? <span dangerouslySetInnerHTML={{ __html: renderKatexInHtml(fixLatex(text!)) }} />}</div>
       </div>
     </div>
   );

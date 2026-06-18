@@ -1,5 +1,5 @@
+import { memo } from 'react';
 import { Moon, Sun, MessageCircle, Search } from 'lucide-react';
-import { CourseSwitcher } from '../ui/CourseSwitcher';
 import { useI18n } from '../hooks/useI18n';
 
 interface CourseEntryLike { slug: string; title: string; }
@@ -15,14 +15,10 @@ interface HeaderProps {
   onSearchToggle?: () => void;
   title?: string;
   subtitle?: string;
-  courses?: CourseEntryLike[];
-  currentCourse?: string;
-  onSwitchCourse?: (slug: string) => void;
 }
 
-export function Header({ effective, onThemeToggle, modulesStudied, checklistDone, totalModules, totalChecklist, onChatToggle, onSearchToggle, title, subtitle, courses, currentCourse, onSwitchCourse }: HeaderProps) {
+function Header({ effective, onThemeToggle, modulesStudied, checklistDone, totalModules, totalChecklist, onChatToggle, onSearchToggle, title, subtitle }: HeaderProps) {
   const { t } = useI18n();
-  const hasMultiple = courses && courses.length > 1;
   return (
     <header id="app-header">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '0 1.5rem', maxWidth: '1440px', margin: '0 auto' }}>
@@ -31,10 +27,6 @@ export function Header({ effective, onThemeToggle, modulesStudied, checklistDone
             {title || 'LearnCourse'}
           </a>
           {subtitle && <span style={{ fontSize: '0.7rem', padding: '0.15em 0.6em', borderRadius: '999px', background: 'var(--color-accent-soft)', color: 'var(--color-accent)', fontWeight: 600, whiteSpace: 'nowrap' }}>{subtitle}</span>}
-
-          {hasMultiple && (
-            <CourseSwitcher courses={courses!} current={currentCourse!} onSwitch={onSwitchCourse!} />
-          )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -64,3 +56,6 @@ export function Header({ effective, onThemeToggle, modulesStudied, checklistDone
     </header>
   );
 }
+
+const MemoizedHeader = memo(Header);
+export { MemoizedHeader as Header };

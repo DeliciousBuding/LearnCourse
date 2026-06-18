@@ -1,24 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function useScrollSpy(sectionIds: string[], offset = 120) {
   const [activeId, setActiveId] = useState<string>('');
+  const idsRef = useRef(sectionIds);
+  idsRef.current = sectionIds;
 
   useEffect(() => {
-    const headings = sectionIds
-      .map(id => {
-        const el = document.getElementById(id);
-        return el ? { id, el } : null;
-      })
-      .filter((x): x is { id: string; el: HTMLElement } => x !== null);
-
     const handleScroll = () => {
       const scrollY = window.scrollY + offset;
-      let active: string | null = null;
 
-      for (const { id, el } of headings) {
-        if (el.offsetTop <= scrollY) {
-          active = id;
-        }
+      // Build heading list sorted by actual DOM position (top→bottom)
+      const headings = idsRef.current
+        .map(id => {
+          const el = document.getElementById(id);
+          return el ? { id, el, top: el.offsetTop } : null;
+        })
+        .filter((x): x is { id: string; el: HTMLElement; top: number } => x !== null)
+        .sort((a, b) => a.top - b.top);
+
+      // Find the last heading that's above or at the scroll position
+      let active: string | null = null;
+      for (const { id, top } of headings) {
+        if (top <= scrollY) active = id;
       }
 
       if (active !== null) {
@@ -26,10 +29,10 @@ export function useScrollSpy(sectionIds: string[], offset = 120) {
       }
     };
 
-    handleScroll(); // initial check
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [sectionIds, offset]);
+  }, [offset]); // sectionIds changes handled via ref — no effect re-run needed
 
   return activeId;
 }

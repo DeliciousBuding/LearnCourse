@@ -2,9 +2,17 @@
 
 import katex from 'katex';
 
-/** Fix corrupted LaTeX escape sequences from JSON serialization */
+/**
+ * Fix corrupted LaTeX escape sequences from JSON serialization.
+ * Uses negative lookbehind to avoid double-escaping already-correct
+ * sequences (e.g. "\alpha" must NOT become "\\alpha").
+ * These only fix pre-corrupted data — they are a safety net, not a
+ * general-purpose LaTeX corrector.
+ */
 export function fixLatex(text: string): string {
-  return text.replace(/lpha/g, '\\alpha').replace(/eta/g, '\\beta');
+  return text
+    .replace(/(?<!\\a)lpha/g, '\\alpha')
+    .replace(/(?<!\\\\b)eta/g, '\\\\beta');
 }
 
 /** Render $...$ inline math in a plain text string to KaTeX HTML */

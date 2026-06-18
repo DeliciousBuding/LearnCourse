@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import { fixLatex, renderKatexInHtml } from '../lib/math';
 
@@ -17,9 +17,9 @@ function sanitize(html: string): string {
   return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR });
 }
 
-export function ProseBlock({ html }: ProseBlockProps) {
+function ProseBlock({ html }: ProseBlockProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const processed = renderKatexInHtml(fixLatex(sanitize(html)));
+  const processed = useMemo(() => renderKatexInHtml(fixLatex(sanitize(html))), [html]);
 
   // Wire up slide-ref click handlers only — no runtime KaTeX scan needed
   useEffect(() => {
@@ -40,3 +40,6 @@ export function ProseBlock({ html }: ProseBlockProps) {
   if (!html) return null;
   return <div ref={ref} dangerouslySetInnerHTML={{ __html: processed }} />;
 }
+
+const MemoizedProseBlock = memo(ProseBlock);
+export { MemoizedProseBlock as ProseBlock };

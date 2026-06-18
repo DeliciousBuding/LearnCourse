@@ -100,7 +100,7 @@ export function SlidePanel({ moduleId, courseware, page, pdfFile, onClose }: Sli
           </div>
         )}
         {resolvedPdfFile ? (
-          <iframe src={`/slides/${resolvedPdfFile}?toolbar=0&navpanes=0${page ? '#page=' + page : ''}`}
+          <iframe src={`${import.meta.env.BASE_URL}slides/${resolvedPdfFile}?toolbar=0&navpanes=0${page ? '#page=' + page : ''}`}
             style={{ width: '100%', height: '100%', border: 'none', opacity: loading ? 0 : 1, transition: 'opacity .2s' }}
             onLoad={() => setLoading(false)} title={courseware} />
         ) : (

@@ -4,14 +4,11 @@ import { useToast } from '../hooks/useToast';
 import { useI18n } from '../hooks/useI18n';
 import type { Quiz, QuizType } from '../types';
 import katex from 'katex';
+import { fixLatex } from '../lib/math';
 
 interface QuizAnswers { [quizId: string]: number }
 
 const LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
-
-function fixText(s: string): string {
-  return s.replace(/lpha/g, '\\alpha').replace(/eta/g, '\\beta');
-}
 
 function renderMath(text: string): string {
   return text.replace(/\$([^$]+)\$/g, (_, f) => {
@@ -206,7 +203,7 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
               }}>
                 {LABELS[idx]}
               </span>
-              <span style={{ paddingTop: 1 }} dangerouslySetInnerHTML={{ __html: renderMath(fixText(opt.text)) }} />
+              <span style={{ paddingTop: 1 }} dangerouslySetInnerHTML={{ __html: renderMath(fixLatex(opt.text)) }} />
             </button>
           );
         });
@@ -243,7 +240,7 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
                   }}>
                     {checked ? '✓' : LABELS[idx]}
                   </span>
-                  <span style={{ paddingTop: 1 }} dangerouslySetInnerHTML={{ __html: renderMath(fixText(opt.text)) }} />
+                  <span style={{ paddingTop: 1 }} dangerouslySetInnerHTML={{ __html: renderMath(fixLatex(opt.text)) }} />
                 </button>
               );
             })}
@@ -353,7 +350,7 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
         display: 'flex', alignItems: 'flex-start', gap: '0.6rem',
       }}>
         {renderStatusIcon()}
-        <span dangerouslySetInnerHTML={{ __html: renderMath(fixText(quiz.question)) }} />
+        <span dangerouslySetInnerHTML={{ __html: renderMath(fixLatex(quiz.question)) }} />
       </div>
 
       {/* Options / Input */}
@@ -383,7 +380,7 @@ export function QuizBlock({ quiz }: { quiz: Quiz }) {
         }}>
           <strong>{isCorrect ? `✓ ${t('quiz.correct')}` : `✗ ${t('quiz.wrong')}`}</strong>
           <span style={{ marginLeft: '0.5rem' }} dangerouslySetInnerHTML={{
-            __html: renderMath(fixText(isCorrect ? quiz.feedbackCorrect : quiz.feedbackWrong)),
+            __html: renderMath(fixLatex(isCorrect ? quiz.feedbackCorrect : quiz.feedbackWrong)),
           }} />
         </div>
       )}
