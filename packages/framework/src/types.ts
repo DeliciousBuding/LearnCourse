@@ -152,6 +152,8 @@ export interface ReviewConfig {
     strategyHeaders?: string[];
     strategyRows?: string[][];
   };
+  /** Directory path for slide PDF files. During dev the vite plugin serves from here; during build PDFs are copied to dist/slides/ */
+  slideSourceDir?: string;
   /** Module ID → PDF filename for slide panel */
   slidePdfs?: Record<string, string>;
 }

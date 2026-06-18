@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, useRef } from 'react';
+import { lazy, memo, Suspense, useEffect, useState, useRef } from 'react';
 import type { ModuleMeta, ModuleContent, Quiz, ExamQuestion } from '../types';
 import { Callout } from './Callout';
 import { Card } from './Card';
@@ -26,7 +26,7 @@ interface ModuleSectionProps {
   loadModule: (moduleId: string) => Promise<ModuleContent>;
 }
 
-export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false, onStudiedToggle, onOpenSlide, loadModule }: ModuleSectionProps) {
+function ModuleSection({ meta, quizzes, examQuestions, expandAll = false, onStudiedToggle, onOpenSlide, loadModule }: ModuleSectionProps) {
   const [module, setModule] = useState<ModuleContent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -38,7 +38,7 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
     if (!el) return;
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
-    }, { rootMargin: '800px' });
+    }, { rootMargin: '200px' });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -166,3 +166,6 @@ export function ModuleSection({ meta, quizzes, examQuestions, expandAll = false,
     </section>
   );
 }
+
+const MemoizedModuleSection = memo(ModuleSection);
+export { MemoizedModuleSection as ModuleSection };

@@ -34,8 +34,7 @@ export { ExamQuestion } from './ui/ExamQuestion';
 export { KnowledgeMainline } from './ui/KnowledgeMainline';
 export { KnowledgeMap } from './ui/KnowledgeMap';
 export { LandingPage } from './ui/LandingPage';
-export { MathFormula } from './ui/MathFormula';
-export { MermaidDiagram } from './ui/MermaidDiagram';
+// MathFormula and MermaidDiagram are lazy-loaded by ModuleSection — NOT exported from barrel to avoid pulling heavy deps (katex, mermaid) into main bundle
 export { ModuleSection } from './ui/ModuleSection';
 export { ProseBlock } from './ui/ProseBlock';
 export { QuizBlock } from './ui/QuizBlock';

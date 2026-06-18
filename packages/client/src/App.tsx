@@ -1,4 +1,4 @@
-import { Component, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { Component, useState, useCallback, useEffect, memo, type ReactNode } from 'react';
 import type { ReviewConfig } from '@learncourse/framework/types';
 import { useTheme, useLocalStorage, useTextSelectionQuote, ToastProvider, useKeyboardShortcuts } from '@learncourse/framework';
 import { Header, Sidebar, ReadingProgress, ScrollTop, SlidePanel, ChatPanel, SearchDialog } from '@learncourse/framework';
@@ -19,7 +19,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-export default function App() {
+function App() {
   const [courseSlug, setCourseSlug] = useState<string | null>(() =>
     new URLSearchParams(location.search).get('course')
   );
@@ -74,8 +74,7 @@ export default function App() {
         totalModules={config.modules.length} totalChecklist={config.checklist.length}
         onChatToggle={() => setChatOpen(!chatOpen)}
         onSearchToggle={() => setShowSearch(true)}
-        title={config.title} subtitle={config.subtitle}
-        courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
+        title={config.title} subtitle={config.subtitle} />
       <Sidebar groups={config.navGroups} courses={COURSES} currentCourse={courseSlug} onSwitchCourse={selectCourse} />
       <div id="app-layout">
         <main id="app-main" style={hasRightPanel ? { marginRight: rightOffset } : undefined}>
@@ -125,3 +124,5 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
+export default memo(App);
