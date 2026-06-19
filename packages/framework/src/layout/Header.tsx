@@ -21,7 +21,7 @@ function Header({ effective, onThemeToggle, modulesStudied, checklistDone, total
   const { t } = useI18n();
   return (
     <header id="app-header">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '0 1.5rem', maxWidth: '1440px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '0 1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
           <a href="?" style={{ fontSize: '1.1rem', fontWeight: 700, fontFamily: 'Georgia, "Noto Serif SC", serif', color: 'var(--color-text)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
             {title || 'LearnCourse'}

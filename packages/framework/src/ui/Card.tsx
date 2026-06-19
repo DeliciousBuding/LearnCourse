@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ProseBlock } from './ProseBlock';
 
 interface CardProps { variant?: 'accent' | 'danger' | 'warning' | 'success'; title?: string; children: ReactNode; }
 
@@ -8,6 +9,9 @@ const borderColor: Record<string, string> = {
 };
 
 export function Card({ variant, title, children }: CardProps) {
+  // If children is a ProseBlock wrapping body HTML that contains <div class="card">,
+  // that inner wrapper is redundant — the Card component IS the card wrapper.
+  // We let it pass through since DOMPurify will handle it.
   return (
     <div style={{
       background: 'var(--color-surface)', border: '1px solid var(--color-border)',

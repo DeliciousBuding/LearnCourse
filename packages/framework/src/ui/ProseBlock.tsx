@@ -8,6 +8,7 @@ const ALLOWED_TAGS = ['p', 'strong', 'em', 'code', 'pre', 'a', 'ul', 'ol', 'li',
 const ALLOWED_ATTR = ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'id', 'data-page'];
 
 function sanitize(html: string): string {
+  if (!html) return '';
   html = html
     .replace(/border-left\s*:\s*[^;"]+/gi, 'border-left:none')
     .replace(/var\(--text-sm\)/g, '0.875rem')
@@ -19,7 +20,7 @@ function sanitize(html: string): string {
 
 function ProseBlock({ html }: ProseBlockProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const processed = useMemo(() => renderKatexInHtml(fixLatex(sanitize(html))), [html]);
+  const processed = useMemo(() => html ? renderKatexInHtml(fixLatex(sanitize(html))) : '', [html]);
 
   // Wire up slide-ref click handlers only — no runtime KaTeX scan needed
   useEffect(() => {

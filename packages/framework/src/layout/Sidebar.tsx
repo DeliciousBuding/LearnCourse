@@ -15,9 +15,9 @@ interface SidebarProps {
 }
 
 const linkStyle = (active: boolean): React.CSSProperties => ({
-  display: 'block', padding: '0.28rem 0.5rem', marginBottom: 1,
-  borderRadius: 6, textDecoration: 'none', lineHeight: 1.45,
-  transition: 'all 120ms ease', fontSize: '0.82rem',
+  display: 'block', padding: '0.32rem 0.5rem', marginBottom: 1,
+  borderRadius: 6, textDecoration: 'none', lineHeight: 1.5,
+  transition: 'all 120ms ease', fontSize: '0.88rem',
   color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
   background: active ? 'var(--color-accent-soft)' : 'transparent',
   fontWeight: active ? 600 : 400,
@@ -91,10 +91,10 @@ function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProp
                 display: 'flex', alignItems: 'center', gap: 4, width: '100%',
                 padding: '0.35rem 0.5rem', borderRadius: 6, border: '1px solid var(--color-border)',
                 background: 'var(--color-surface)', color: 'var(--color-text-secondary)',
-                fontSize: '0.78rem', cursor: 'pointer',
+                fontSize: '0.82rem', cursor: 'pointer',
               }}
             >
-              <BookOpen size={13} />
+              <BookOpen size={14} />
               <span style={{ flex: 1, textAlign: 'left' }}>{courses?.find(c => c.slug === currentCourse)?.title || t('sidebar.selectCourse')}</span>
               <ChevronDown size={12} style={{ transform: coursesOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
             </button>
@@ -109,7 +109,7 @@ function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProp
                       padding: '0.22rem 0.5rem', borderRadius: 6, border: 'none',
                       background: c.slug === currentCourse ? 'var(--color-accent-soft)' : 'transparent',
                       color: c.slug === currentCourse ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                      fontSize: '0.76rem', cursor: 'pointer', fontWeight: c.slug === currentCourse ? 600 : 400,
+                      fontSize: '0.80rem', cursor: 'pointer', fontWeight: c.slug === currentCourse ? 600 : 400,
                     }}
                   >
                     {c.title}
@@ -133,14 +133,13 @@ function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProp
                   display: 'flex', alignItems: 'center', gap: 4,
                   width: '100%', padding: '0.55rem 0.5rem 0.2rem',
                   border: 'none', background: 'none', cursor: 'pointer',
-                  fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  color: anyActiveInGroup ? 'var(--color-accent)' : 'var(--color-text-tertiary)',
+                  fontSize: '0.82rem', fontWeight: 600,
+                  color: anyActiveInGroup ? 'var(--color-accent)' : 'var(--color-text)',
                   transition: 'color 150ms',
                 }}
               >
                 <ChevronDown
-                  size={10}
+                  size={12}
                   style={{
                     transform: isExpanded ? 'none' : 'rotate(-90deg)',
                     transition: 'transform 180ms ease',
@@ -151,10 +150,7 @@ function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProp
               </button>
               <div
                 style={{
-                  overflow: 'hidden',
-                  maxHeight: isExpanded ? `${group.links.length * 32 + 8}px` : '0px',
-                  opacity: isExpanded ? 1 : 0,
-                  transition: 'max-height 250ms ease, opacity 200ms ease',
+                  display: isExpanded ? 'block' : 'none',
                   paddingLeft: '0.3rem',
                 }}
               >
@@ -168,7 +164,11 @@ function Sidebar({ groups, courses, currentCourse, onSwitchCourse }: SidebarProp
                       ref={active ? activeRef : undefined}
                       onClick={e => {
                         e.preventDefault();
-                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                        const el = document.getElementById(id);
+                        if (el) {
+                          (window as any).__navTarget = id;
+                          el.scrollIntoView({ behavior: 'instant', block: 'start' });
+                        }
                       }}
                       style={linkStyle(active)}
                       onMouseEnter={e => { if (!active) { e.currentTarget.style.color = 'var(--color-text)'; e.currentTarget.style.background = 'var(--color-code-bg)'; } }}

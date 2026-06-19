@@ -38,7 +38,7 @@ function ModuleSection({ meta, quizzes, examQuestions, expandAll = false, onStud
     if (!el) return;
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
-    }, { rootMargin: '200px' });
+    }, { rootMargin: '100px' });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -47,7 +47,24 @@ function ModuleSection({ meta, quizzes, examQuestions, expandAll = false, onStud
   useEffect(() => {
     if (!visible || module) return;
     let cancelled = false;
-    loadModule(meta.id).then(mod => { if (!cancelled) { setModule(mod); setError(null); } }).catch(err => {
+    loadModule(meta.id).then(mod => {
+      if (!cancelled) {
+        setModule(mod);
+        setError(null);
+        // Re-scroll if user clicked a nav link targeting this module
+        if ((window as any).__navTarget === meta.id) {
+          (window as any).__navTarget = null;
+          const el = document.getElementById(meta.id);
+          if (el) {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                el.scrollIntoView({ behavior: 'instant', block: 'start' });
+              });
+            });
+          }
+        }
+      }
+    }).catch(err => {
       if (!cancelled) setError(err instanceof Error ? err.message : '加载失败');
     });
     return () => { cancelled = true; };

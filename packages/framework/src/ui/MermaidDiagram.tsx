@@ -44,7 +44,7 @@ function MermaidDiagram({ id, chart }: MermaidDiagramProps) {
   useEffect(() => {
     init();
     let cancelled = false;
-    const uniqueId = `m-${id.replace(/[^a-zA-Z0-9-]/g, '-')}-${renderId.slice(1, 8)}`;
+    const uniqueId = `m-${(id || `mm-${renderId.slice(1,8)}`).replace(/[^a-zA-Z0-9-]/g, '-')}-${renderId.slice(1, 8)}`;
 
     mermaid.render(uniqueId, chart).then(({ svg }) => {
       if (!cancelled) { setSvg(svg); setError(null); }
