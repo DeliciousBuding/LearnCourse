@@ -11,6 +11,13 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     this.state = { hasError: false };
   }
   static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    (window as any).__errorBoundaryDetails = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: info.componentStack
+    };
+  }
   render() {
     if (this.state.hasError) {
       return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--color-text-tertiary)', fontSize: '1rem' }}>渲染出错，请刷新页面</div>;

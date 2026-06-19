@@ -11,6 +11,7 @@ interface QuizAnswers { [quizId: string]: number }
 const LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 function renderMath(text: string): string {
+  if (!text) return '';
   return text.replace(/\$([^$]+)\$/g, (_, f) => {
     try { return katex.renderToString(f.trim(), { throwOnError: false, strict: false }); }
     catch { return _; }

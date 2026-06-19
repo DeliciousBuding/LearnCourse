@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 
+// FIXME: Read slideSourceDir from course configs at build time instead of hardcoding paths.
+const courseRoot = path.resolve(__dirname, '../../../');
+
 export default defineConfig({
   plugins: [
     react(),
@@ -11,7 +14,10 @@ export default defineConfig({
     {
       name: 'slide-pdf-server',
       configureServer(server) {
-        const slideDirs = ['C:/Users/Ding/Documents/个人文件/03 课程资料/当前学期/人工智能/学期课件', 'C:/Users/Ding/Documents/个人文件/03 课程资料/当前学期/计算机系统/学期课件'].filter(d => {
+        const slideDirs = [
+          path.join(courseRoot, '人工智能', '学期课件'),
+          path.join(courseRoot, '计算机系统', '学期课件'),
+        ].filter(d => {
           try { return fs.statSync(d).isDirectory(); } catch { return false; }
         });
         if (slideDirs.length === 0) return;
@@ -39,7 +45,7 @@ export default defineConfig({
   server: {
     port: 5299,
     strictPort: true,
-    fs: { allow: ['..', '../..', 'C:/Users/Ding/Documents/个人文件/03 课程资料/当前学期/人工智能/学期课件', 'C:/Users/Ding/Documents/个人文件/03 课程资料/当前学期/计算机系统/学期课件'] },
+    fs: { allow: ['..', '../..', path.join(courseRoot, '人工智能', '学期课件'), path.join(courseRoot, '计算机系统', '学期课件')] },
   },
   build: {
     modulePreload: {

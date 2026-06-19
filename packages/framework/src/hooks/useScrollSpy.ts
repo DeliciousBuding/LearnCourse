@@ -1,38 +1,43 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export function useScrollSpy(sectionIds: string[], offset = 120) {
   const [activeId, setActiveId] = useState<string>('');
   const idsRef = useRef(sectionIds);
   idsRef.current = sectionIds;
+  const rafRef = useRef<number>(0);
+
+  const calc = useCallback(() => {
+    const scrollY = window.scrollY + offset;
+    const headings = idsRef.current
+      .map(id => { const el = document.getElementById(id); return el ? { id, top: el.offsetTop } : null; })
+      .filter((x): x is { id: string; top: number } => x !== null)
+      .sort((a, b) => a.top - b.top);
+
+    let active: string | null = null;
+    for (const { id, top } of headings) {
+      if (top <= scrollY) active = id;
+    }
+    if (active !== null) {
+      setActiveId(prev => (prev !== active ? active : prev));
+    }
+  }, [offset]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY + offset;
-
-      // Build heading list sorted by actual DOM position (top→bottom)
-      const headings = idsRef.current
-        .map(id => {
-          const el = document.getElementById(id);
-          return el ? { id, el, top: el.offsetTop } : null;
-        })
-        .filter((x): x is { id: string; el: HTMLElement; top: number } => x !== null)
-        .sort((a, b) => a.top - b.top);
-
-      // Find the last heading that's above or at the scroll position
-      let active: string | null = null;
-      for (const { id, top } of headings) {
-        if (top <= scrollY) active = id;
-      }
-
-      if (active !== null) {
-        setActiveId(prev => (prev !== active ? active : prev));
-      }
+    const throttled = () => {
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = 0;
+        calc();
+      });
     };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [offset]); // sectionIds changes handled via ref — no effect re-run needed
+    calc(); // initial sync call — needed for first paint
+    window.addEventListener('scroll', throttled, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', throttled);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [calc]);
 
   return activeId;
 }
