@@ -22,8 +22,8 @@
 ```bash
 git clone https://github.com/DeliciousBuding/LearnCourse.git
 cd LearnCourse
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 浏览器打开 `http://localhost:5173` 即可看到 Landing 页和模板课程。
@@ -71,7 +71,7 @@ ReviewConfig          ← 课程级配置（标题、导航、模块列表、数
 2. 编辑 `config.ts` — 设置标题、模块元数据、导航分组
 3. 编写 `modules/module-s1.ts` 等模块内容文件
 4. 在 `index.ts` 注册一行：`{ slug: 'my-course', title: '我的课程', config: myConfig }`
-5. `npm run dev` — 自动出现在 Landing 页和课程切换器
+5. `pnpm run dev` — 自动出现在 Landing 页和课程切换器
 
 ## AI 聊天配置
 
