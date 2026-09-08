@@ -37,7 +37,7 @@
 |---|------|--------|------|-----------|
 | D1 | Update README.md with Chinese README + architecture diagram | U🟢 | 15min | — |
 | D2 | Create `docs/progress/MASTER.md` with cross-conversation index | S🟢 | 10min | — |
-| D3 | Validate with `npm run build` + `npx vite preview` smoke test | E🟢 | 5min | D2 |
+| D3 | Validate with `pnpm run build` + `pnpm exec vite preview` smoke test | E🟢 | 5min | D2 |
 
 ## Parallel Lanes
 
@@ -52,7 +52,7 @@ Phase D: D1 → D2 → D3
 
 - [ ] All 🔴 violations resolved (App.tsx error boundary + ProseBlock sanitizer + Mermaid dark mode)
 - [ ] All 🟡 violations have mitigation plan or fix
-- [ ] `npm run build` passes with 0 errors
+- [ ] `pnpm run build` passes with 0 errors
 - [ ] Both courses load without console errors
 - [ ] i18n foundation in place (≥10 keys translated)
 - [ ] S.U.P.E.R score improves from 🟡 3.2 → 🟢 4.0+

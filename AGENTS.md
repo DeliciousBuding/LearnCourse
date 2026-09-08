@@ -20,8 +20,8 @@ Open-source learning framework + 2 course sites (AI, Computer Systems).
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Dev server (port 5299) |
-| `npm run build` | Production build |
+| `pnpm run dev` | Dev server (port 5299) |
+| `pnpm run build` | Production build |
 | `python tests/test_suite.py` | Run test suite |
 
 ## Known Gotchas

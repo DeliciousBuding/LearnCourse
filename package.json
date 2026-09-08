@@ -3,14 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "description": "Open-source learning framework — build interactive course review sites with AI chat sidebar",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "npm run dev -w packages/client",
-    "build": "npm run build -w packages/client",
-    "preview": "npm run preview -w packages/client",
-    "deploy": "npm run build && gh-pages -d packages/client/dist"
+    "dev": "pnpm --filter @learncourse/client dev",
+    "build": "pnpm --filter @learncourse/client build",
+    "preview": "pnpm --filter @learncourse/client preview",
+    "deploy": "pnpm run build && gh-pages -d packages/client/dist"
   },
   "keywords": [
     "education",
@@ -24,5 +21,6 @@
   "author": "",
   "devDependencies": {
     "gh-pages": "^6.3.0"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }
